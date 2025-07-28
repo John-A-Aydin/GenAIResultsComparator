@@ -1,0 +1,4 @@
+generated_text,reference_text,AudioSNR_score,AudioSNR_passed
+data/audio_samples/gtts_output.mp3,data/audio_samples/edge_tts_aria.mp3,0.2597182095050812,False
+data/audio_samples/edge_tts_guy.mp3,data/audio_samples/edge_tts_aria.mp3,0.2802513539791107,False
+data/audio_samples/synthetic_poor_tts.wav,data/audio_samples/edge_tts_aria.mp3,0.21303896605968475,False
