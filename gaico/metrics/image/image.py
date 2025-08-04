@@ -6,6 +6,7 @@ import pandas as pd
 
 from ..base import BaseMetric
 from PIL import Image
+from scipy.ndimage import gaussian_filter
 
 class ImageMetric(BaseMetric, ABC):
     """
@@ -14,6 +15,114 @@ class ImageMetric(BaseMetric, ABC):
     """
 
     pass
+
+class SSIM(ImageMetric):
+    """
+    Computes the Structural Similarity Index (SSIM) between two images or batches.
+    Pure NumPy + SciPy implementation. Output is normalized to [0, 1].
+    """
+    def __init__(self, resize: bool = True, **kwargs: Any):
+        super().__init__(**kwargs)
+        self.resize = resize
+
+    def _compute_ssim_grayscale(self, img1: np.ndarray, img2: np.ndarray) -> float:
+        K1, K2 = 0.01, 0.03
+        L = 255.0
+        C1 = (K1 * L) ** 2
+        C2 = (K2 * L) ** 2
+
+        mu1 = gaussian_filter(img1, sigma=1.5)
+        mu2 = gaussian_filter(img2, sigma=1.5)
+
+        mu1_sq = mu1 ** 2
+        mu2_sq = mu2 ** 2
+        mu1_mu2 = mu1 * mu2
+
+        sigma1_sq = gaussian_filter(img1 * img1, sigma=1.5) - mu1_sq
+        sigma2_sq = gaussian_filter(img2 * img2, sigma=1.5) - mu2_sq
+        sigma12 = gaussian_filter(img1 * img2, sigma=1.5) - mu1_mu2
+
+        numerator = (2 * mu1_mu2 + C1) * (2 * sigma12 + C2)
+        denominator = (mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2)
+        ssim_map = numerator / (denominator + 1e-8)
+        return np.mean(ssim_map)
+
+    def _single_calculate(self, generated_item: Any, reference_item: Any, **kwargs: Any) -> float:
+        if isinstance(generated_item, Image.Image):
+            generated_item = generated_item.convert("RGB")
+            generated_item = np.array(generated_item)
+        if isinstance(reference_item, Image.Image):
+            reference_item = reference_item.convert("RGB")
+            reference_item = np.array(reference_item)
+
+        if generated_item.dtype != np.uint8:
+            generated_item = (np.clip(generated_item, 0, 1) * 255).astype(np.uint8)
+        if reference_item.dtype != np.uint8:
+            reference_item = (np.clip(reference_item, 0, 1) * 255).astype(np.uint8)
+
+        if generated_item.shape != reference_item.shape:
+            if not self.resize:
+                raise ValueError("Input images for SSIM must have the same dimensions.")
+            ref_img = Image.fromarray(reference_item)
+            gen_img = Image.fromarray(generated_item).resize(ref_img.size, Image.Resampling.LANCZOS)
+            generated_item = np.array(gen_img)
+            reference_item = np.array(ref_img)
+
+        # RGB channel-wise SSIM, then normalized to [0,1]
+        if generated_item.ndim == 3 and generated_item.shape[2] == 3:
+            ssim_val = np.mean([
+                self._compute_ssim_grayscale(generated_item[..., c], reference_item[..., c])
+                for c in range(3)
+            ])
+        else:
+            ssim_val = self._compute_ssim_grayscale(generated_item, reference_item)
+
+        # Normalize to [0,1]
+        return (ssim_val + 1) / 2
+
+    def _batch_calculate(self, generated_items: Iterable, reference_items: Iterable, **kwargs: Any) -> List[float]:
+        return [self._single_calculate(gen, ref, **kwargs) for gen, ref in zip(generated_items, reference_items)]
+
+
+
+class PSNR(ImageMetric):
+    """
+    Computes the Peak Signal-to-Noise Ratio (PSNR) between two images or batches.
+    Uses a pure NumPy implementation. Output is in decibels (dB).
+    """
+    def __init__(self, resize: bool = True, **kwargs: Any):
+        super().__init__(**kwargs)
+        self.resize = resize
+
+    def _single_calculate(self, generated_item: Any, reference_item: Any, **kwargs: Any) -> float:
+        if isinstance(generated_item, Image.Image):
+            generated_item = generated_item.convert("RGB")
+            generated_item = np.array(generated_item)
+        if isinstance(reference_item, Image.Image):
+            reference_item = reference_item.convert("RGB")
+            reference_item = np.array(reference_item)
+
+        if generated_item.dtype != np.uint8:
+            generated_item = (np.clip(generated_item, 0, 1) * 255).astype(np.uint8)
+        if reference_item.dtype != np.uint8:
+            reference_item = (np.clip(reference_item, 0, 1) * 255).astype(np.uint8)
+
+        if generated_item.shape != reference_item.shape:
+            if not self.resize:
+                raise ValueError("Input images for PSNR must have the same dimensions.")
+            ref_img = Image.fromarray(reference_item)
+            gen_img = Image.fromarray(generated_item).resize(ref_img.size, Image.Resampling.LANCZOS)
+            generated_item = np.array(gen_img)
+            reference_item = np.array(ref_img)
+
+        mse = np.mean((generated_item.astype(np.float32) - reference_item.astype(np.float32)) ** 2)
+        if mse == 0:
+            return float("inf")
+        return 10 * np.log10((255.0 ** 2) / mse)
+
+    def _batch_calculate(self, generated_items: Iterable, reference_items: Iterable, **kwargs: Any) -> List[float]:
+        return [self._single_calculate(gen, ref, **kwargs) for gen, ref in zip(generated_items, reference_items)]
+
 
 class AverageHash(ImageMetric):
     """
