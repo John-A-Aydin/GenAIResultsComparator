@@ -122,31 +122,31 @@ print(f"aHash Similarity Score: {score:.3f}")
 
 The `HistogramMatch` metric evaluates similarity between two images based on their color histograms. It computes the intersection between histograms across the RGB channels, normalized to the range [0.0, 1.0].
 
-### ✅ Features
+### Features
 - Histogram-based perceptual similarity
 - Captures color distribution differences
 - Channel-wise histogram intersection
 - Normalized score ∈ [0.0, 1.0]
 
-### 💡 Input Formats
+### Input Formats
 - `np.ndarray` (RGB)
 - `PIL.Image.Image`
 
-### ⚙️ Internals
+### Internals
 1. Convert inputs to RGB
 2. Compute histogram for each channel (default 256 bins)
 3. Use histogram intersection:  
    `similarity = sum(min(ref_hist[i], gen_hist[i])) / sum(gen_hist)`
 4. Average across channels
 
-### ⚙️ Parameters
+### Parameters
 - `bins`: Number of bins per channel (default: 256)
 
-### 🚫 Limitations
+### Limitations
 - Sensitive to lighting changes and minor shifts
 - Ignores spatial layout of pixels
 
-### 💻 Example
+### Example
 ```python
 from gaico.metrics.image import HistogramMatch
 from PIL import Image
