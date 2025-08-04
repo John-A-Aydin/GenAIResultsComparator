@@ -18,48 +18,70 @@ class ImageMetric(BaseMetric, ABC):
 
 class SSIM(ImageMetric):
     """
-    Computes the Structural Similarity Index (SSIM) between two images or batches.
-    Pure NumPy + SciPy implementation. Output is normalized to [0, 1].
+    Structural Similarity Index (SSIM) for perceptual image similarity.
+
+    SSIM compares two images by analyzing local patterns of pixel intensities 
+    that have been normalized for luminance and contrast. Instead of treating 
+    each pixel independently (like MSE or PSNR), SSIM captures structural 
+    distortions that are more aligned with how humans perceive differences 
+    between images.
+
+    The score is averaged across RGB channels and normalized to [0, 1],
+    where 1.0 indicates perfect structural similarity.
     """
+
     def __init__(self, resize: bool = True, **kwargs: Any):
+        """Initialize SSIM similarity metric with optional resizing."""
         super().__init__(**kwargs)
         self.resize = resize
 
     def _compute_ssim_grayscale(self, img1: np.ndarray, img2: np.ndarray) -> float:
+        # Constants for stability in division (as per SSIM paper)
         K1, K2 = 0.01, 0.03
-        L = 255.0
+        L = 255.0  # Pixel value dynamic range
         C1 = (K1 * L) ** 2
         C2 = (K2 * L) ** 2
 
-        mu1 = gaussian_filter(img1, sigma=1.5)
-        mu2 = gaussian_filter(img2, sigma=1.5)
+        # Compute local means using Gaussian blur
+        mu1 = gaussian_filter(img1, sigma=1.5, mode='reflect')
+        mu2 = gaussian_filter(img2, sigma=1.5, mode='reflect')
 
+        # Compute variances and covariance
         mu1_sq = mu1 ** 2
         mu2_sq = mu2 ** 2
         mu1_mu2 = mu1 * mu2
+        sigma1_sq = gaussian_filter(img1 * img1, sigma=1.5, mode='reflect') - mu1_sq
+        sigma2_sq = gaussian_filter(img2 * img2, sigma=1.5, mode='reflect') - mu2_sq
+        sigma12 = gaussian_filter(img1 * img2, sigma=1.5, mode='reflect') - mu1_mu2
 
-        sigma1_sq = gaussian_filter(img1 * img1, sigma=1.5) - mu1_sq
-        sigma2_sq = gaussian_filter(img2 * img2, sigma=1.5) - mu2_sq
-        sigma12 = gaussian_filter(img1 * img2, sigma=1.5) - mu1_mu2
-
+        # SSIM formula numerator and denominator
         numerator = (2 * mu1_mu2 + C1) * (2 * sigma12 + C2)
         denominator = (mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2)
-        ssim_map = numerator / (denominator + 1e-8)
+
+        # Avoid division by zero without degrading score quality
+        denominator = np.where(denominator == 0, 1e-8, denominator)
+        ssim_map = numerator / denominator
+
         return np.mean(ssim_map)
 
     def _single_calculate(self, generated_item: Any, reference_item: Any, **kwargs: Any) -> float:
+        """
+        Compute SSIM similarity between a pair of images.
+        Handles preprocessing, resizing, color conversion, and averaging across channels.
+        """
+        # Convert images to NumPy arrays if given as PIL
         if isinstance(generated_item, Image.Image):
-            generated_item = generated_item.convert("RGB")
-            generated_item = np.array(generated_item)
+            generated_item = np.array(generated_item.convert("RGB"))
         if isinstance(reference_item, Image.Image):
-            reference_item = reference_item.convert("RGB")
-            reference_item = np.array(reference_item)
+            reference_item = np.array(reference_item.convert("RGB"))
 
+        # Normalize float images to 0-255 uint8
         if generated_item.dtype != np.uint8:
-            generated_item = (np.clip(generated_item, 0, 1) * 255).astype(np.uint8)
+            generated_item = (generated_item * 255.0).round().clip(0, 255).astype(np.uint8)
         if reference_item.dtype != np.uint8:
-            reference_item = (np.clip(reference_item, 0, 1) * 255).astype(np.uint8)
+            reference_item = (reference_item * 255.0).round().clip(0, 255).astype(np.uint8)
 
+        # Resize if dimensions mismatch
         if generated_item.shape != reference_item.shape:
             if not self.resize:
                 raise ValueError("Input images for SSIM must have the same dimensions.")
@@ -68,7 +90,7 @@ class SSIM(ImageMetric):
             generated_item = np.array(gen_img)
             reference_item = np.array(ref_img)
 
-        # RGB channel-wise SSIM, then normalized to [0,1]
+        # Compute SSIM per channel and take the mean for RGB
         if generated_item.ndim == 3 and generated_item.shape[2] == 3:
             ssim_val = np.mean([
                 self._compute_ssim_grayscale(generated_item[..., c], reference_item[..., c])
@@ -77,36 +99,47 @@ class SSIM(ImageMetric):
         else:
             ssim_val = self._compute_ssim_grayscale(generated_item, reference_item)
 
-        # Normalize to [0,1]
-        return (ssim_val + 1) / 2
+        # Clamp output to [0, 1]
+        return float(np.clip(ssim_val, 0.0, 1.0))
 
     def _batch_calculate(self, generated_items: Iterable, reference_items: Iterable, **kwargs: Any) -> List[float]:
         return [self._single_calculate(gen, ref, **kwargs) for gen, ref in zip(generated_items, reference_items)]
 
 
-
 class PSNR(ImageMetric):
     """
-    Computes the Peak Signal-to-Noise Ratio (PSNR) between two images or batches.
-    Uses a pure NumPy implementation. Output is in decibels (dB).
+    Peak Signal-to-Noise Ratio (PSNR) for pixel-level image similarity.
+
+    PSNR is a simple metric based on the Mean Squared Error (MSE) between two images.
+    It measures the ratio between the maximum possible pixel value and the magnitude 
+    of noise (error). While easy to compute and interpret, PSNR does not account 
+    for perceptual factors and may overestimate similarity in some cases.
+
+    Output is in decibels (dB), where higher values indicate better quality.
     """
     def __init__(self, resize: bool = True, **kwargs: Any):
+        """Initialize PSNR similarity metric with optional resizing."""
         super().__init__(**kwargs)
         self.resize = resize
 
     def _single_calculate(self, generated_item: Any, reference_item: Any, **kwargs: Any) -> float:
+        """
+        Compute PSNR between a pair of images.
+        Handles resizing, RGB conversion, and normalization.
+        """
+        # Convert to NumPy arrays if inputs are PIL Images
         if isinstance(generated_item, Image.Image):
-            generated_item = generated_item.convert("RGB")
-            generated_item = np.array(generated_item)
+            generated_item = np.array(generated_item.convert("RGB"))
         if isinstance(reference_item, Image.Image):
-            reference_item = reference_item.convert("RGB")
-            reference_item = np.array(reference_item)
+            reference_item = np.array(reference_item.convert("RGB"))
 
+        # Normalize float inputs to 0-255 uint8
         if generated_item.dtype != np.uint8:
             generated_item = (np.clip(generated_item, 0, 1) * 255).astype(np.uint8)
         if reference_item.dtype != np.uint8:
             reference_item = (np.clip(reference_item, 0, 1) * 255).astype(np.uint8)
 
+        # Resize if images differ in shape
         if generated_item.shape != reference_item.shape:
             if not self.resize:
                 raise ValueError("Input images for PSNR must have the same dimensions.")
@@ -115,14 +148,16 @@ class PSNR(ImageMetric):
             generated_item = np.array(gen_img)
             reference_item = np.array(ref_img)
 
+        # Compute Mean Squared Error (MSE)
         mse = np.mean((generated_item.astype(np.float32) - reference_item.astype(np.float32)) ** 2)
+
+        # PSNR formula: 10 * log10(MAX^2 / MSE)
         if mse == 0:
-            return float("inf")
-        return 10 * np.log10((255.0 ** 2) / mse)
+            return float("inf")  # Perfect match
+        return float(10 * np.log10((255.0 ** 2) / mse))
 
     def _batch_calculate(self, generated_items: Iterable, reference_items: Iterable, **kwargs: Any) -> List[float]:
         return [self._single_calculate(gen, ref, **kwargs) for gen, ref in zip(generated_items, reference_items)]
-
 
 class AverageHash(ImageMetric):
     """
@@ -171,7 +206,7 @@ class AverageHash(ImageMetric):
 
         # Hamming similarity: proportion of matching bits.
         similarity = 1.0 - np.sum(gen_hash != ref_hash) / len(gen_hash)
-        return similarity
+        return float(similarity)
 
     def _batch_calculate(
         self,
@@ -273,99 +308,3 @@ class HistogramMatch(ImageMetric):
 
 
 
-# TODO: Placeholder
-class SSIMNormalized(ImageMetric):
-    """
-    Placeholder for a normalized Structural Similarity Index (SSIM) metric for images.
-    SSIM typically ranges from -1 to 1. Normalized version aims for 0 to 1.
-    """
-
-    def __init__(self, **kwargs: Any):
-        """Initialize the SSIMNormalized metric."""
-        super().__init__(**kwargs)
-
-    def _single_calculate(
-        self, generated_item: Any, reference_item: Any, **kwargs: Any
-    ) -> float | dict:
-        """
-        (Placeholder) Calculate normalized SSIM for a single pair of images.
-
-        :param generated_item: The generated image (e.g., np.array, path).
-        :type generated_item: Any
-        :param reference_item: The reference image.
-        :type reference_item: Any
-        :param kwargs: Additional keyword arguments (e.g., data_range).
-        :return: Placeholder normalized SSIM score.
-        :rtype: float | dict
-        """
-        print("Warning: SSIMNormalized._single_calculate is a placeholder.")
-        return 0.0  # Placeholder, normalized SSIM should be 0-1.
-
-    def _batch_calculate(
-        self,
-        generated_items: Iterable | np.ndarray | pd.Series,
-        reference_items: Iterable | np.ndarray | pd.Series,
-        **kwargs: Any,
-    ) -> List[float] | List[dict] | np.ndarray | pd.Series:
-        """
-        (Placeholder) Calculate normalized SSIM for a batch of images.
-
-        :param generated_items: Iterable of generated images.
-        :type generated_items: Iterable | np.ndarray | pd.Series
-        :param reference_items: Iterable of reference images.
-        :type reference_items: Iterable | np.ndarray | pd.Series
-        :param kwargs: Additional keyword arguments.
-        :return: Placeholder list of normalized SSIM scores.
-        :rtype: List[float] | List[dict] | np.ndarray | pd.Series
-        """
-        print("Warning: SSIMNormalized._batch_calculate is a placeholder.")
-        return []  # Placeholder
-
-
-# TODO: Placeholder
-class PSNRNormalized(ImageMetric):
-    """
-    Placeholder for a normalized Peak Signal-to-Noise Ratio (PSNR) metric for images.
-    PSNR is often in dB. Normalization would map it to 0-1.
-    """
-
-    def __init__(self, **kwargs: Any):
-        """Initialize the PSNRNormalized metric."""
-        super().__init__(**kwargs)
-
-    def _single_calculate(
-        self, generated_item: Any, reference_item: Any, **kwargs: Any
-    ) -> float | dict:
-        """
-        (Placeholder) Calculate normalized PSNR for a single pair of images.
-
-        :param generated_item: The generated image (e.g., np.array, path).
-        :type generated_item: Any
-        :param reference_item: The reference image.
-        :type reference_item: Any
-        :param kwargs: Additional keyword arguments (e.g., data_range).
-        :return: Placeholder normalized PSNR score.
-        :rtype: float | dict
-        """
-        print("Warning: PSNRNormalized._single_calculate is a placeholder.")
-        return 0.0  # Placeholder, normalized PSNR should be 0-1.
-
-    def _batch_calculate(
-        self,
-        generated_items: Iterable | np.ndarray | pd.Series,
-        reference_items: Iterable | np.ndarray | pd.Series,
-        **kwargs: Any,
-    ) -> List[float] | List[dict] | np.ndarray | pd.Series:
-        """
-        (Placeholder) Calculate normalized PSNR for a batch of images.
-
-        :param generated_items: Iterable of generated images.
-        :type generated_items: Iterable | np.ndarray | pd.Series
-        :param reference_items: Iterable of reference images.
-        :type reference_items: Iterable | np.ndarray | pd.Series
-        :param kwargs: Additional keyword arguments.
-        :return: Placeholder list of normalized PSNR scores.
-        :rtype: List[float] | List[dict] | np.ndarray | pd.Series
-        """
-        print("Warning: PSNRNormalized._batch_calculate is a placeholder.")
-        return []  # Placeholder

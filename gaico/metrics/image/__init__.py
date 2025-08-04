@@ -1,3 +1,3 @@
-from .image import PSNRNormalized, SSIMNormalized
+from .image import PSNR, SSIM, AverageHash, HistogramMatch
 
-__all__ = ["SSIMNormalized", "PSNRNormalized"]
+__all__ = ["SSIM", "PSNR", "AverageHash", "HistogramMatch"]
