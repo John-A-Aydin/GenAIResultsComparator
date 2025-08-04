@@ -93,7 +93,7 @@ The AverageHash metric compares two images using perceptual hashing. It converts
 - `np.ndarray` (RGB or grayscale)
 - `PIL.Image.Image`
 
-### ⚙️ Internals
+### Internals
 1. Convert both inputs to grayscale and resize to 8×8
 2. Compute mean pixel value for each
 3. Generate binary hash: 1 if pixel > mean, else 0
