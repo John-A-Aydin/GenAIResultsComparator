@@ -35,7 +35,7 @@ img2 = np.array(Image.open("gen.png"))
 score = metric.calculate(img2, img1)
 print(f"SSIM Score: {score:.3f}")
 
-
+```
 
 ## PSNR (Peak Signal-to-Noise Ratio)
 
@@ -75,6 +75,7 @@ img2 = np.array(Image.open("gen.png"))
 
 score = metric.calculate(img2, img1)
 print(f"PSNR Score: {score:.2f} dB")
+```
 
 ## AverageHash (aHash)
 
@@ -113,7 +114,7 @@ img2 = Image.open("gen.jpg")
 
 score = metric.calculate(img2, img1)
 print(f"aHash Similarity Score: {score:.3f}")
-
+```
 
 ## HistogramMatch
 
@@ -156,4 +157,4 @@ img2 = Image.open("gen.jpg")
 
 score = metric.calculate(img2, img1)
 print(f"HistogramMatch Score: {score:.3f}")
-
+```
