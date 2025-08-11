@@ -67,10 +67,14 @@ jsd = [
   "nltk>=3.9.1",
   "scipy>=1.15.3",
 ]
+audio = [
+    "scipy>=1.15.3",
+    "soundfile>=0.12.0",
+]
 
 [dependency-groups]
 dev = [
-  "gaico[jsd,cosine,bertscore]",
+  "gaico[jsd,cosine,bertscore,audio]",
   "build>=1.2.2.post1",
   "flake8>=7.2.0",
   "hypothesis>=6.131.17",
