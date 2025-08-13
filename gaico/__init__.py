@@ -6,7 +6,7 @@ from .thresholds import (
     calculate_pass_fail_percent,
     get_default_thresholds,
 )
-from .metrics.image import ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch
+from .metrics.image import ImageSSIM, ImageAverageHash, ImageHistogramMatch
 from .utils import generate_deltas_frame, prepare_results_dataframe
 from .visualize import plot_metric_comparison, plot_radar_comparison
 

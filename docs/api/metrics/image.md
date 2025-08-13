@@ -35,47 +35,6 @@ img2 = np.array(Image.open("gen.png"))
 score = metric.calculate(img2, img1)
 print(f"ImageSSIM Score: {score:.3f}")
 
-```
-
-## ImagePSNR (Peak Signal-to-Noise Ratio)
-
-**Path:** `gaico.metrics.image.ImagePSNR`
-
-Peak Signal-to-Noise Ratio is a pixel-wise metric that quantifies the fidelity of a generated image with respect to a reference image. It is computed based on the Mean Squared Error (MSE) between the two images. A higher ImagePSNR indicates better similarity.
-
-### Features
-- Supports grayscale and RGB images
-- Auto-resizes images if shapes don't match (configurable)
-- Normalized for 8-bit image data
-- Returns float (in decibels)
-
-### Input Formats
-- `np.ndarray` (float or uint8)
-- `PIL.Image.Image`
-- Float arrays are scaled internally to `uint8`
-
-### Internals
-1. Converts both images to RGB (if applicable)
-2. Rescales float inputs to 8-bit uint8
-3. Computes MSE = mean((img1 - img2)^2)
-4. ImagePSNR = 10 * log10((MAX^2) / MSE), where MAX = 255
-
-### Edge Case
-- If MSE = 0 (perfect match), returns `inf` (infinite ImagePSNR)
-
-### Example
-```python
-from gaico.metrics.image import ImagePSNR
-from PIL import Image
-import numpy as np
-
-metric = ImagePSNR()
-img1 = np.array(Image.open("ref.png"))
-img2 = np.array(Image.open("gen.png"))
-
-score = metric.calculate(img2, img1)
-print(f"ImagePSNR Score: {score:.2f} dB")
-```
 
 ## ImageAverageHash (aHash)
 

@@ -1,0 +1,4 @@
+generated_text,reference_text,ImageSSIM_score,ImageSSIM_passed
+<PIL.PngImagePlugin.PngImageFile image mode=RGB size=600x900 at 0x14B3C3390>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=600x900 at 0x14B3C3B10>,0.9999995231628418,True
+<PIL.PngImagePlugin.PngImageFile image mode=RGB size=1024x1536 at 0x14B3C34D0>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=600x900 at 0x14B3C3B10>,0.4438682595888774,False
+<PIL.PngImagePlugin.PngImageFile image mode=RGB size=2048x2048 at 0x14B3C39D0>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=600x900 at 0x14B3C3B10>,0.4307000935077667,False

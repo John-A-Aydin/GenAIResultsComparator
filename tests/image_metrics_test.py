@@ -4,7 +4,7 @@ from PIL import Image
 import warnings
 import os
 
-from gaico.metrics.image import ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch
+from gaico.metrics.image import ImageSSIM, ImageAverageHash, ImageHistogramMatch
 
 # Dummy image generator.
 def generate_test_images(shape=(64, 64, 3)):
@@ -19,12 +19,6 @@ class TestImageMetrics:
     @pytest.fixture(scope="class")
     def test_images(self):
         return generate_test_images()
-
-    def test_psnr_basic(self, test_images):
-        img1, img2, img3, _ = test_images
-        metric = ImagePSNR()
-        assert metric._single_calculate(img1, img1) == float("inf")
-        assert metric._single_calculate(img2, img1) > metric._single_calculate(img3, img1)
 
     def test_ssim_normalized(self, test_images):
         img1, img2, img3, _ = test_images
@@ -53,7 +47,6 @@ class TestImageMetrics:
         img1, img2, img3, _ = test_images
         batch = [img2, img3]
         ref_batch = [img1, img1]
-        assert len(ImagePSNR()._batch_calculate(batch, ref_batch)) == 2
         assert len(ImageSSIM()._batch_calculate(batch, ref_batch)) == 2
         assert len(ImageAverageHash()._batch_calculate(batch, ref_batch)) == 2
         assert len(ImageHistogramMatch()._batch_calculate(batch, ref_batch)) == 2
@@ -62,7 +55,7 @@ class TestImageMetrics:
         img1 = np.random.randint(0, 255, size=(64, 64, 3), dtype=np.uint8)
         img2 = np.random.randint(0, 255, size=(32, 32, 3), dtype=np.uint8)
         # Should not raise error due to auto-resize
-        for Metric in [ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch]:
+        for Metric in [ImageSSIM, ImageAverageHash, ImageHistogramMatch]:
             metric = Metric()
             score = metric._single_calculate(img1, img2)
             assert isinstance(score, float)
@@ -70,7 +63,7 @@ class TestImageMetrics:
     def test_grayscale_input(self):
         img1 = np.random.randint(0, 255, size=(64, 64), dtype=np.uint8)
         img2 = np.random.randint(0, 255, size=(64, 64), dtype=np.uint8)
-        for Metric in [ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch]:
+        for Metric in [ImageSSIM, ImageAverageHash, ImageHistogramMatch]:
             metric = Metric()
             score = metric._single_calculate(img1, img2)
             assert isinstance(score, float)
