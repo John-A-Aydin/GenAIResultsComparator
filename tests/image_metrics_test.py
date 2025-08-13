@@ -4,7 +4,7 @@ from PIL import Image
 import warnings
 import os
 
-from gaico.metrics.image import PSNR, SSIM, AverageHash, HistogramMatch
+from gaico.metrics.image import ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch
 
 # Dummy image generator.
 def generate_test_images(shape=(64, 64, 3)):
@@ -22,13 +22,13 @@ class TestImageMetrics:
 
     def test_psnr_basic(self, test_images):
         img1, img2, img3, _ = test_images
-        metric = PSNR()
+        metric = ImagePSNR()
         assert metric._single_calculate(img1, img1) == float("inf")
         assert metric._single_calculate(img2, img1) > metric._single_calculate(img3, img1)
 
     def test_ssim_normalized(self, test_images):
         img1, img2, img3, _ = test_images
-        metric = SSIM()
+        metric = ImageSSIM()
         assert metric._single_calculate(img1, img1) == pytest.approx(1.0)
         score_similar = metric._single_calculate(img2, img1)
         score_noisy = metric._single_calculate(img3, img1)
@@ -36,13 +36,13 @@ class TestImageMetrics:
 
     def test_average_hash(self, test_images):
         img1, img2, img3, _ = test_images
-        metric = AverageHash()
+        metric = ImageAverageHash()
         assert 0 <= metric._single_calculate(img1, img2) <= 1
         assert 0 <= metric._single_calculate(img2, img3) <= 1
 
     def test_histogram_match(self, test_images):
         img1, img2, img3, _ = test_images
-        metric = HistogramMatch()
+        metric = ImageHistogramMatch()
         score1 = metric._single_calculate(img1, img2)
         score2 = metric._single_calculate(img1, img3)
         assert 0 <= score1 <= 1
@@ -53,16 +53,16 @@ class TestImageMetrics:
         img1, img2, img3, _ = test_images
         batch = [img2, img3]
         ref_batch = [img1, img1]
-        assert len(PSNR()._batch_calculate(batch, ref_batch)) == 2
-        assert len(SSIM()._batch_calculate(batch, ref_batch)) == 2
-        assert len(AverageHash()._batch_calculate(batch, ref_batch)) == 2
-        assert len(HistogramMatch()._batch_calculate(batch, ref_batch)) == 2
+        assert len(ImagePSNR()._batch_calculate(batch, ref_batch)) == 2
+        assert len(ImageSSIM()._batch_calculate(batch, ref_batch)) == 2
+        assert len(ImageAverageHash()._batch_calculate(batch, ref_batch)) == 2
+        assert len(ImageHistogramMatch()._batch_calculate(batch, ref_batch)) == 2
 
     def test_mismatched_shapes_handled_by_resize(self):
         img1 = np.random.randint(0, 255, size=(64, 64, 3), dtype=np.uint8)
         img2 = np.random.randint(0, 255, size=(32, 32, 3), dtype=np.uint8)
         # Should not raise error due to auto-resize
-        for Metric in [PSNR, SSIM, AverageHash, HistogramMatch]:
+        for Metric in [ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch]:
             metric = Metric()
             score = metric._single_calculate(img1, img2)
             assert isinstance(score, float)
@@ -70,7 +70,7 @@ class TestImageMetrics:
     def test_grayscale_input(self):
         img1 = np.random.randint(0, 255, size=(64, 64), dtype=np.uint8)
         img2 = np.random.randint(0, 255, size=(64, 64), dtype=np.uint8)
-        for Metric in [PSNR, SSIM, AverageHash, HistogramMatch]:
+        for Metric in [ImagePSNR, ImageSSIM, ImageAverageHash, ImageHistogramMatch]:
             metric = Metric()
             score = metric._single_calculate(img1, img2)
             assert isinstance(score, float)

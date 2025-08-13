@@ -16,13 +16,13 @@ class ImageMetric(BaseMetric, ABC):
 
     pass
 
-class SSIM(ImageMetric):
+class ImageSSIM(ImageMetric):
     """
-    Structural Similarity Index (SSIM) for perceptual image similarity.
+    Structural Similarity Index (ImageSSIM) for perceptual image similarity.
 
-    SSIM compares two images by analyzing local patterns of pixel intensities 
+    ImageSSIM compares two images by analyzing local patterns of pixel intensities 
     that have been normalized for luminance and contrast. Instead of treating 
-    each pixel independently (like MSE or PSNR), SSIM captures structural 
+    each pixel independently (like MSE or ImagePSNR), ImageSSIM captures structural 
     distortions that are more aligned with how humans perceive differences 
     between images.
 
@@ -31,12 +31,12 @@ class SSIM(ImageMetric):
     """
 
     def __init__(self, resize: bool = True, **kwargs: Any):
-        """Initialize SSIM similarity metric with optional resizing."""
+        """Initialize ImageSSIM similarity metric with optional resizing."""
         super().__init__(**kwargs)
         self.resize = resize
 
     def _compute_ssim_grayscale(self, img1: np.ndarray, img2: np.ndarray) -> float:
-        # Constants for stability in division (as per SSIM paper)
+        # Constants for stability in division (as per ImageSSIM paper)
         K1, K2 = 0.01, 0.03
         L = 255.0  # Pixel value dynamic range
         C1 = (K1 * L) ** 2
@@ -54,7 +54,7 @@ class SSIM(ImageMetric):
         sigma2_sq = gaussian_filter(img2 * img2, sigma=1.5, mode='reflect') - mu2_sq
         sigma12 = gaussian_filter(img1 * img2, sigma=1.5, mode='reflect') - mu1_mu2
 
-        # SSIM formula numerator and denominator
+        # ImageSSIM formula numerator and denominator
         numerator = (2 * mu1_mu2 + C1) * (2 * sigma12 + C2)
         denominator = (mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2)
 
@@ -66,7 +66,7 @@ class SSIM(ImageMetric):
 
     def _single_calculate(self, generated_item: Any, reference_item: Any, **kwargs: Any) -> float:
         """
-        Compute SSIM similarity between a pair of images.
+        Compute ImageSSIM similarity between a pair of images.
         Handles preprocessing, resizing, color conversion, and averaging across channels.
         """
         # Convert images to NumPy arrays if given as PIL
@@ -84,13 +84,13 @@ class SSIM(ImageMetric):
         # Resize if dimensions mismatch
         if generated_item.shape != reference_item.shape:
             if not self.resize:
-                raise ValueError("Input images for SSIM must have the same dimensions.")
+                raise ValueError("Input images for ImageSSIM must have the same dimensions.")
             ref_img = Image.fromarray(reference_item)
             gen_img = Image.fromarray(generated_item).resize(ref_img.size, Image.Resampling.LANCZOS)
             generated_item = np.array(gen_img)
             reference_item = np.array(ref_img)
 
-        # Compute SSIM per channel and take the mean for RGB
+        # Compute ImageSSIM per channel and take the mean for RGB
         if generated_item.ndim == 3 and generated_item.shape[2] == 3:
             ssim_val = np.mean([
                 self._compute_ssim_grayscale(generated_item[..., c], reference_item[..., c])
@@ -106,25 +106,25 @@ class SSIM(ImageMetric):
         return [self._single_calculate(gen, ref, **kwargs) for gen, ref in zip(generated_items, reference_items)]
 
 
-class PSNR(ImageMetric):
+class ImagePSNR(ImageMetric):
     """
-    Peak Signal-to-Noise Ratio (PSNR) for pixel-level image similarity.
+    Peak Signal-to-Noise Ratio (ImagePSNR) for pixel-level image similarity.
 
-    PSNR is a simple metric based on the Mean Squared Error (MSE) between two images.
+    ImagePSNR is a simple metric based on the Mean Squared Error (MSE) between two images.
     It measures the ratio between the maximum possible pixel value and the magnitude 
-    of noise (error). While easy to compute and interpret, PSNR does not account 
+    of noise (error). While easy to compute and interpret, ImagePSNR does not account 
     for perceptual factors and may overestimate similarity in some cases.
 
     Output is in decibels (dB), where higher values indicate better quality.
     """
     def __init__(self, resize: bool = True, **kwargs: Any):
-        """Initialize PSNR similarity metric with optional resizing."""
+        """Initialize ImagePSNR similarity metric with optional resizing."""
         super().__init__(**kwargs)
         self.resize = resize
 
     def _single_calculate(self, generated_item: Any, reference_item: Any, **kwargs: Any) -> float:
         """
-        Compute PSNR between a pair of images.
+        Compute ImagePSNR between a pair of images.
         Handles resizing, RGB conversion, and normalization.
         """
         # Convert to NumPy arrays if inputs are PIL Images
@@ -142,7 +142,7 @@ class PSNR(ImageMetric):
         # Resize if images differ in shape
         if generated_item.shape != reference_item.shape:
             if not self.resize:
-                raise ValueError("Input images for PSNR must have the same dimensions.")
+                raise ValueError("Input images for ImagePSNR must have the same dimensions.")
             ref_img = Image.fromarray(reference_item)
             gen_img = Image.fromarray(generated_item).resize(ref_img.size, Image.Resampling.LANCZOS)
             generated_item = np.array(gen_img)
@@ -151,7 +151,7 @@ class PSNR(ImageMetric):
         # Compute Mean Squared Error (MSE)
         mse = np.mean((generated_item.astype(np.float32) - reference_item.astype(np.float32)) ** 2)
 
-        # PSNR formula: 10 * log10(MAX^2 / MSE)
+        # ImagePSNR formula: 10 * log10(MAX^2 / MSE)
         if mse == 0:
             return float("inf")  # Perfect match
         return float(10 * np.log10((255.0 ** 2) / mse))
@@ -159,7 +159,7 @@ class PSNR(ImageMetric):
     def _batch_calculate(self, generated_items: Iterable, reference_items: Iterable, **kwargs: Any) -> List[float]:
         return [self._single_calculate(gen, ref, **kwargs) for gen, ref in zip(generated_items, reference_items)]
 
-class AverageHash(ImageMetric):
+class ImageAverageHash(ImageMetric):
     """
     Normalized average hash (aHash) similarity for images.
     This method compares 8x8 grayscale downsampled images and computes
@@ -231,7 +231,7 @@ class AverageHash(ImageMetric):
         return results
 
 
-class HistogramMatch(ImageMetric):
+class ImageHistogramMatch(ImageMetric):
     """
     Color histogram-based similarity metric for images.
     Computes normalized histogram intersection between RGB histograms of two images.

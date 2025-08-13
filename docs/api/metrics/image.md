@@ -5,14 +5,14 @@ This module provides a suite of image similarity metrics designed to compare gen
 
 ---
 
-## SSIM (Structural Similarity Index)
+## ImageSSIM (Structural Similarity Index)
 
-**Path:** `gaico.metrics.image.SSIM`
+**Path:** `gaico.metrics.image.ImageSSIM`
 
-Structural Similarity Index measures perceived quality based on structural information, luminance, and contrast. SSIM returns a similarity score between 0 and 1, where 1 indicates identical images.
+Structural Similarity Index measures perceived quality based on structural information, luminance, and contrast. ImageSSIM returns a similarity score between 0 and 1, where 1 indicates identical images.
 
 ### Features
-- Per-channel SSIM for RGB images
+- Per-channel ImageSSIM for RGB images
 - Normalized to [0, 1]
 - Optional auto-resize for mismatched shapes
 - Handles both grayscale and color images
@@ -24,24 +24,24 @@ Structural Similarity Index measures perceived quality based on structural infor
 
 ### Example
 ```python
-from gaico.metrics.image import SSIM
+from gaico.metrics.image import ImageSSIM
 from PIL import Image
 import numpy as np
 
-metric = SSIM()
+metric = ImageSSIM()
 img1 = np.array(Image.open("ref.png"))
 img2 = np.array(Image.open("gen.png"))
 
 score = metric.calculate(img2, img1)
-print(f"SSIM Score: {score:.3f}")
+print(f"ImageSSIM Score: {score:.3f}")
 
 ```
 
-## PSNR (Peak Signal-to-Noise Ratio)
+## ImagePSNR (Peak Signal-to-Noise Ratio)
 
-**Path:** `gaico.metrics.image.PSNR`
+**Path:** `gaico.metrics.image.ImagePSNR`
 
-Peak Signal-to-Noise Ratio is a pixel-wise metric that quantifies the fidelity of a generated image with respect to a reference image. It is computed based on the Mean Squared Error (MSE) between the two images. A higher PSNR indicates better similarity.
+Peak Signal-to-Noise Ratio is a pixel-wise metric that quantifies the fidelity of a generated image with respect to a reference image. It is computed based on the Mean Squared Error (MSE) between the two images. A higher ImagePSNR indicates better similarity.
 
 ### Features
 - Supports grayscale and RGB images
@@ -58,30 +58,30 @@ Peak Signal-to-Noise Ratio is a pixel-wise metric that quantifies the fidelity o
 1. Converts both images to RGB (if applicable)
 2. Rescales float inputs to 8-bit uint8
 3. Computes MSE = mean((img1 - img2)^2)
-4. PSNR = 10 * log10((MAX^2) / MSE), where MAX = 255
+4. ImagePSNR = 10 * log10((MAX^2) / MSE), where MAX = 255
 
 ### Edge Case
-- If MSE = 0 (perfect match), returns `inf` (infinite PSNR)
+- If MSE = 0 (perfect match), returns `inf` (infinite ImagePSNR)
 
 ### Example
 ```python
-from gaico.metrics.image import PSNR
+from gaico.metrics.image import ImagePSNR
 from PIL import Image
 import numpy as np
 
-metric = PSNR()
+metric = ImagePSNR()
 img1 = np.array(Image.open("ref.png"))
 img2 = np.array(Image.open("gen.png"))
 
 score = metric.calculate(img2, img1)
-print(f"PSNR Score: {score:.2f} dB")
+print(f"ImagePSNR Score: {score:.2f} dB")
 ```
 
-## AverageHash (aHash)
+## ImageAverageHash (aHash)
 
-**Path:** `gaico.metrics.image.AverageHash`
+**Path:** `gaico.metrics.image.ImageAverageHash`
 
-The AverageHash metric compares two images using perceptual hashing. It converts each image to an 8×8 grayscale image, computes the mean pixel value, and generates a binary hash based on whether each pixel is above or below the mean. The similarity score is the Hamming similarity (1 - normalized Hamming distance) between the two hashes.
+The ImageAverageHash metric compares two images using perceptual hashing. It converts each image to an 8×8 grayscale image, computes the mean pixel value, and generates a binary hash based on whether each pixel is above or below the mean. The similarity score is the Hamming similarity (1 - normalized Hamming distance) between the two hashes.
 
 ### Features
 - Perceptual image similarity metric
@@ -105,10 +105,10 @@ The AverageHash metric compares two images using perceptual hashing. It converts
 
 ### Example
 ```python
-from gaico.metrics.image import AverageHash
+from gaico.metrics.image import ImageAverageHash
 from PIL import Image
 
-metric = AverageHash()
+metric = ImageAverageHash()
 img1 = Image.open("ref.jpg")
 img2 = Image.open("gen.jpg")
 
@@ -116,11 +116,11 @@ score = metric.calculate(img2, img1)
 print(f"aHash Similarity Score: {score:.3f}")
 ```
 
-## HistogramMatch
+## ImageHistogramMatch
 
-**Path:** `gaico.metrics.image.HistogramMatch`
+**Path:** `gaico.metrics.image.ImageHistogramMatch`
 
-The `HistogramMatch` metric evaluates similarity between two images based on their color histograms. It computes the intersection between histograms across the RGB channels, normalized to the range [0.0, 1.0].
+The `ImageHistogramMatch` metric evaluates similarity between two images based on their color histograms. It computes the intersection between histograms across the RGB channels, normalized to the range [0.0, 1.0].
 
 ### Features
 - Histogram-based perceptual similarity
@@ -148,13 +148,13 @@ The `HistogramMatch` metric evaluates similarity between two images based on the
 
 ### Example
 ```python
-from gaico.metrics.image import HistogramMatch
+from gaico.metrics.image import ImageHistogramMatch
 from PIL import Image
 
-metric = HistogramMatch()
+metric = ImageHistogramMatch()
 img1 = Image.open("ref.jpg")
 img2 = Image.open("gen.jpg")
 
 score = metric.calculate(img2, img1)
-print(f"HistogramMatch Score: {score:.3f}")
+print(f"ImageHistogramMatch Score: {score:.3f}")
 ```
