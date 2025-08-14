@@ -29,6 +29,10 @@ The following notebooks demonstrate the
 
 - A comparison of 'usual' text-based metrics with special metrics for time series and automated planning.
 
+### 5. [`example-audio.ipynb`](example-audio.ipynb): Audio Evaluation with Specialized Metrics
+
+- Evaluating AI-generated TTS audio using specialized audio metrics and highlighting why text-based metrics are unsuitable for audio tasks.
+
 ## Basic Examples
 
 The `basic-examples` directory contains notebooks that illustrate fundamental concepts and workflows in GAICo in various domains. These examples are designed for users who want to understand the GAICo's functionalities in various domains.
@@ -57,6 +61,11 @@ The `basic-examples` directory contains notebooks that illustrate fundamental co
 
 - The aim for this notebook was to aid with evaluating DeepSeek R1 for [AI4Society's Point of View (POV)](https://drive.google.com/file/d/1ErR1xT7ftvmHiUyYrdUbjyd4qCK_FxKX/view?usp=sharing).
 - **Note**: All results remove the `<think>` tags for the DeepSeek models.
+
+### 7. [`example-audio_data.ipynb`](basic-examples/example-audio_data.ipynb): Advanced Audio Analysis & Multi-format Processing
+
+- Demonstrates audio evaluation across different formats (MP3/WAV) and format-independent processing capabilities.
+- Provides interpretation frameworks for both fidelity tasks (TTS) and creative generation (music), with detailed quality analysis.
 
 ## Advanced Examples
 
