@@ -33,6 +33,14 @@ The following notebooks demonstrate the
 
 - Evaluating AI-generated TTS audio using specialized audio metrics and highlighting why text-based metrics are unsuitable for audio tasks.
 
+### 6. [`example-image.ipynb`](example-image.ipynb): Image Evaluation with Specialized Metrics
+
+- Evaluating AI-generated images using specialized image metrics.
+
+### 7. [`case_study.ipynb`](case_study.ipynb): Travel Assistant AI System Evaluation using GAICo
+
+- Evaluating composite AI travel assistant system "pipelines" using GAICo, comprising an orchestrator LLM and specialist image and audio generation models.
+
 ## Basic Examples
 
 The `basic-examples` directory contains notebooks that illustrate fundamental concepts and workflows in GAICo in various domains. These examples are designed for users who want to understand the GAICo's functionalities in various domains.
