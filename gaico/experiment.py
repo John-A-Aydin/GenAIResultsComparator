@@ -15,7 +15,7 @@ from gaico.metrics import (
 
 from .metrics.audio import AudioSNRNormalized, AudioSpectrogramDistance
 from .metrics.base import BaseMetric
-from .metrics.image import PSNRNormalized, SSIMNormalized
+from .metrics.image import ImageSSIM, ImageAverageHash, ImageHistogramMatch
 from .metrics.structured import PlanningJaccard, PlanningLCS, TimeSeriesDTW, TimeSeriesElementDiff
 from .thresholds import apply_thresholds, get_default_thresholds
 from .utils import generate_deltas_frame, prepare_results_dataframe
@@ -38,8 +38,9 @@ REGISTERED_METRICS: Dict[str, type[BaseMetric]] = {
     "PlanningJaccard": PlanningJaccard,
     "TimeSeriesElementDiff": TimeSeriesElementDiff,
     "TimeSeriesDTW": TimeSeriesDTW,
-    "SSIM": SSIMNormalized,
-    "PSNR": PSNRNormalized,
+    "ImageSSIM": ImageSSIM,
+    "ImageAverageHash": ImageAverageHash,
+    "ImageHistogramMatch": ImageHistogramMatch,
     "AudioSNR": AudioSNRNormalized,
     "AudioSpectrogramDistance": AudioSpectrogramDistance,
 }
