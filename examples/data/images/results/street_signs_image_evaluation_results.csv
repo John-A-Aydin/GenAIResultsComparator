@@ -1,4 +1,4 @@
 generated_text,reference_text,ImageSSIM_score,ImageSSIM_passed
-<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14B3C3ED0>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14B6AE850>,1.0,True
-<PIL.PngImagePlugin.PngImageFile image mode=RGB size=1024x1536 at 0x14B3C3C50>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14B6AE850>,0.19050621365507445,False
-<PIL.PngImagePlugin.PngImageFile image mode=RGB size=2048x2048 at 0x14B6AE5D0>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14B6AE850>,0.08980044722557068,False
+<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14F81F390>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14F81F4D0>,1.0,True
+<PIL.PngImagePlugin.PngImageFile image mode=RGB size=1024x1536 at 0x14F81F250>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14F81F4D0>,0.19050621365507445,False
+<PIL.PngImagePlugin.PngImageFile image mode=RGB size=2048x2048 at 0x14F81F110>,<PIL.PngImagePlugin.PngImageFile image mode=RGB size=236x296 at 0x14F81F4D0>,0.08980044722557068,False

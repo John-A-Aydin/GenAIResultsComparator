@@ -16,7 +16,9 @@ DEFAULT_THRESHOLD: Dict[str, float] = {
     "TimeSeriesElementDiff": 0.5,
     "TimeSeriesDTW": 0.5,
     # Image
-    "ImageSSIM": 0.5,  # TODO
+    "ImageSSIM": 0.5, 
+    "ImageAverageHash": 0.5,
+    "ImageHistogramMatch": 0.5,
     # Audio
     "AudioSNR": 0.5,  # TODO
     "SpectrogramDistance": 0.5,  # TODO
