@@ -14,7 +14,7 @@
 
 <!-- TAGLINE_START -->
 
-_GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing, and visualizing outputs from Large Language Models (LLMs). It offers an extensible range of metrics, including standard text similarity scores and specialized metrics for structured data like planning sequences and time-series.
+_GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing, and visualizing outputs from Large Language Models (LLMs). First released in June 2025, it offers an extensible range of metrics, including standard text similarity scores and specialized metrics for structured data like planning sequences and time-series.
 
 <!-- TAGLINE_END -->
 
