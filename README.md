@@ -7,12 +7,7 @@
   <a href="https://github.com/ai4society/GenAIResultsComparator/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ai4society/GenAIResultsComparator?style=flat-square"></a>
   <a href="https://ai4society.github.io/projects/GenAIResultsComparator/"><img alt="Documentation" src="https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat-square"></a>
   <a href="https://github.com/ai4society/GenAIResultsComparator/actions/workflows/deploy-docs.yml"><img alt="Deploy Docs" src="https://github.com/ai4society/GenAIResultsComparator/actions/workflows/deploy-docs.yml/badge.svg?branch=main&style=flat-square"></a>
-
-  <!-- Uncomment below if repository blows up -->
-  <!-- <br/>
-  <a href="https://pypistats.org/packages/gaico"><img alt="PyPI Downloads" src="https://img.shields.io/pypi/dm/GAICo.svg?style=flat-square"></a>
-  <a href="https://github.com/ai4society/GenAIResultsComparator/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/ai4society/GenAIResultsComparator?style=social"></a>
-  <a href="https://github.com/ai4society/GenAIResultsComparator/network/members"><img alt="GitHub Forks" src="https://img.shields.io/github/forks/ai4society/GenAIResultsComparator?style=social"></a> -->
+  <a href="https://pepy.tech/projects/gaico"><img src="https://static.pepy.tech/badge/gaico" alt="PyPI Downloads"></a>
 </p>
 <!-- BADGES_END -->
 
