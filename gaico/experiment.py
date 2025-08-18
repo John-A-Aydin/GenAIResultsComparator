@@ -161,10 +161,13 @@ class Experiment:
         :param metric_name: The name of the metric to calculate (e.g., "Jaccard", "ROUGE").
         :type metric_name: str
         """
-        if metric_name not in REGISTERED_METRICS:
+        # Combine built-in and custom metrics for lookup
+        combined_metrics = {**REGISTERED_METRICS, **self.custom_metrics}
+
+        if metric_name not in combined_metrics:
             raise ValueError(f"Metric '{metric_name}' is not registered.")
 
-        metric_cls = REGISTERED_METRICS[metric_name]
+        metric_cls = combined_metrics[metric_name]
         try:
             metric_instance = metric_cls()
         except ImportError as e:
