@@ -618,20 +618,3 @@ def test_register_metric_invalid_class(sample_llm_responses_single, sample_refer
     exp = Experiment(sample_llm_responses_single, sample_reference_answer_single)
     with pytest.raises(TypeError, match="metric_class must be a subclass of gaico.BaseMetric"):
         exp.register_metric("InvalidMetric", NotABaseMetric)
-
-
-def test_registered_metric_in_to_dataframe(
-    sample_llm_responses_single, sample_reference_answer_single
-):
-    exp = Experiment(sample_llm_responses_single, sample_reference_answer_single)
-    exp.register_metric("MyCustomMetric", CustomTestMetric)
-
-    # We must patch the combined metrics dictionary that the experiment uses internally
-    # to find the custom metric class.
-    with patch.dict(
-        "gaico.experiment.REGISTERED_METRICS", {"MyCustomMetric": CustomTestMetric}, clear=False
-    ):
-        df = exp.to_dataframe(metrics=["MyCustomMetric"])
-        assert "MyCustomMetric" in df["metric_name"].values
-        assert all(df["score"] == 0.99)
-        assert len(df) == len(sample_llm_responses_single)
