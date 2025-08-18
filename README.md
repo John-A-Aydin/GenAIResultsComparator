@@ -5,20 +5,16 @@
   <a href="https://pypi.org/project/GAICo/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/GAICo.svg?style=flat-square"></a>
   <a href="https://pypi.org/project/GAICo/"><img alt="Python versions" src="https://img.shields.io/pypi/pyversions/GAICo.svg?style=flat-square"></a>
   <a href="https://github.com/ai4society/GenAIResultsComparator/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ai4society/GenAIResultsComparator?style=flat-square"></a>
-  <a href="https://ai4society.github.io/projects/GenAIResultsComparator/"><img alt="Documentation" src="https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat-square"></a>
+  <br>
+  <a href="https://pepy.tech/projects/gaico"><img src="https://static.pepy.tech/badge/gaico" alt="PyPI Downloads"></a>
   <a href="https://github.com/ai4society/GenAIResultsComparator/actions/workflows/deploy-docs.yml"><img alt="Deploy Docs" src="https://github.com/ai4society/GenAIResultsComparator/actions/workflows/deploy-docs.yml/badge.svg?branch=main&style=flat-square"></a>
-
-  <!-- Uncomment below if repository blows up -->
-  <!-- <br/>
-  <a href="https://pypistats.org/packages/gaico"><img alt="PyPI Downloads" src="https://img.shields.io/pypi/dm/GAICo.svg?style=flat-square"></a>
-  <a href="https://github.com/ai4society/GenAIResultsComparator/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/ai4society/GenAIResultsComparator?style=social"></a>
-  <a href="https://github.com/ai4society/GenAIResultsComparator/network/members"><img alt="GitHub Forks" src="https://img.shields.io/github/forks/ai4society/GenAIResultsComparator?style=social"></a> -->
+  <a href="https://ai4society.github.io/projects/GenAIResultsComparator/"><img alt="Documentation" src="https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat-square"></a>
 </p>
 <!-- BADGES_END -->
 
 <!-- TAGLINE_START -->
 
-_GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing, and visualizing outputs from Large Language Models (LLMs). It offers an extensible range of metrics, including standard text similarity scores and specialized metrics for structured data like planning sequences and time-series.
+_GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing, and visualizing outputs from Large Language Models (LLMs). It offers an extensible range of metrics, including standard text similarity scores, specialized metrics for structured data like planning sequences and time-series, and multimedia metrics for image and audio.
 
 <!-- TAGLINE_END -->
 
@@ -32,12 +28,13 @@ Important Links:
 
 ## News
 
-This section summarizes the major releases of the GAICo library, highlighting key features and providing quick start examples.
+This section summarizes the major releases of the GAICo library, highlighting key features and providing quick start examples. For more details, please refer to the [news pages](https://ai4society.github.io/projects/GenAIResultsComparator/news).
 
-| Release Name | Date      | Summary of Changes                                                           | More Info                                                                                              |
-| :----------- | :-------- | :--------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| v0.2.0       | July 2025 | Added specialized text metrics: time-series & automated planning.            | [Details for v0.2.0](https://ai4society.github.io/projects/GenAIResultsComparator/news/#020-july-2025) |
-| v0.1.5       | June 2025 | Initial release: generic text metrics, `Experiment` class, & visualizations. | [Details for v0.1.5](https://ai4society.github.io/projects/GenAIResultsComparator/news/#015-june-2025) |
+| Release Name | Date        | Summary of Changes                                                                         | More Info                                                                                              |
+| :----------- | :---------- | :----------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| v0.3.0       | August 2025 | Added new multimedia metrics (image and audio) and enhancements for the `Experiment` class | [Details for v0.3.0](https://ai4society.github.io/projects/GenAIResultsComparator/news/#030-july-2025) |
+| v0.2.0       | July 2025   | Added specialized text metrics: time-series & automated planning.                          | [Details for v0.2.0](https://ai4society.github.io/projects/GenAIResultsComparator/news/#020-july-2025) |
+| v0.1.5       | June 2025   | Initial release: generic text metrics, `Experiment` class, & visualizations.               | [Details for v0.1.5](https://ai4society.github.io/projects/GenAIResultsComparator/news/#015-june-2025) |
 
 ## Quick Start
 
@@ -98,6 +95,11 @@ results_df = exp.compare(
 # The returned DataFrame contains the calculated scores
 print("Scores DataFrame from compare():")
 print(results_df)
+
+# 3. Get a summary of results (e.g., mean scores and pass rates)
+summary_df = exp.summarize(metrics=['Jaccard', 'ROUGE'], custom_thresholds={"Jaccard": 0.6, "ROUGE_rouge1": 0.35})
+print("\nSummary DataFrame:")
+print(summary_df)
 ```
 
 <!-- QUICKSTART_CODE_END -->
@@ -135,7 +137,7 @@ The `Experiment` class is designed for evaluating a set of model responses again
 
 <!-- DESCRIPTION_CORE_CONCEPT_START -->
 
-At its core, the library provides a set of metrics for evaluating various types of outputs—from plain text strings to structured data like planning sequences and time-series. These metrics produce normalized scores (typically 0 to 1), where 1 indicates a perfect match, enabling robust analysis and visualization of LLM performance.
+At its core, the library provides a set of metrics for evaluating various types of outputs—from plain text strings to structured data like planning sequences and time-series, and multimedia content such as images and audio. While the `Experiment` class streamlines evaluation for text-based and structured string outputs, individual metric classes offer direct control for all data types, including binary or array-based multimedia. These metrics produce normalized scores (typically 0 to 1), where 1 indicates a perfect match, enabling robust analysis and visualization of LLM performance.
 
 <!-- DESCRIPTION_CORE_CONCEPT_END -->
 
@@ -192,8 +194,13 @@ The `calculate()` method takes two main parameters:
   - **N-gram Based:** BLEU, ROUGE, JS Divergence.
   - **Semantic Similarity:** BERTScore.
   - **Structured Data:** Specialized metrics for planning sequences (`PlanningLCS`, `PlanningJaccard`) and time-series data (`TimeSeriesElementDiff`, `TimeSeriesDTW`).
+  - **Multimedia:** Metrics for image similarity (`ImageSSIM`, `ImageAverageHash`, `ImageHistogramMatch`) and audio quality (`AudioSNRNormalized`, `AudioSpectrogramDistance`).
 - **Streamlined Evaluation Workflow:**
   - A high-level `Experiment` class to easily compare multiple models, apply thresholds, generate plots, and create CSV reports.
+- **Enhanced Reporting:**
+  - A `summarize()` method for quick, aggregated overviews of model performance, including mean scores and pass rates.
+- **Dynamic Metric Registration:**
+  - Easily extend the `Experiment` class by registering your own custom `BaseMetric` implementations at runtime.
 - **Powerful Visualization:**
   - Generate bar charts and radar plots to compare model performance using Matplotlib and Seaborn.
 - **Efficient & Flexible:**
@@ -279,21 +286,25 @@ The default `pip install gaico` is lightweight. Some metrics require extra depen
 
 <!-- INSTALLATION_OPTIONAL_FEATURES_START -->
 
-- To include the **JSDivergence** metric (requires SciPy and NLTK):
+- To include **Audio** metrics (requires SciPy and SoundFile):
   ```shell
-  pip install 'gaico[jsd]'
-  ```
-- To include the **CosineSimilarity** metric (requires scikit-learn):
-  ```shell
-  pip install 'gaico[cosine]'
+  pip install 'gaico[audio]'
   ```
 - To include the **BERTScore** metric (which has larger dependencies like PyTorch):
   ```shell
   pip install 'gaico[bertscore]'
   ```
+- To include the **CosineSimilarity** metric (requires scikit-learn):
+  ```shell
+  pip install 'gaico[cosine]'
+  ```
+- To include the **JSDivergence** metric (requires SciPy and NLTK):
+  ```shell
+  pip install 'gaico[jsd]'
+  ```
 - To install with **all optional features**:
   ```shell
-  pip install 'gaico[jsd,cosine,bertscore]'
+  pip install 'gaico[audio,bertscore,cosine,jsd]'
   ```
 
 > [!TIP]
@@ -313,13 +324,14 @@ The following table provides an _estimated_ overview of the relative disk space 
 
 _Note:_ Core dependencies include: `levenshtein`, `matplotlib`, `numpy`, `pandas`, `rouge-score`, and `seaborn`.
 
-| Installation Command                        | Dependencies                                                 | Estimated Total Size Impact |
-| ------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
-| `pip install gaico`                         | Core                                                         | 215 MB                      |
-| `pip install 'gaico[jsd]'`                  | Core + `scipy`, `nltk`                                       | 310 MB                      |
-| `pip install 'gaico[cosine]'`               | Core + `scikit-learn`                                        | 360 MB                      |
-| `pip install 'gaico[bertscore]'`            | Core + `bert-score` (includes `torch`, `transformers`, etc.) | 800 MB                      |
-| `pip install 'gaico[jsd,cosine,bertscore]'` | Core + all dependencies from above                           | 960 MB                      |
+| Installation Command                              | Dependencies                                                 | Estimated Total Size Impact |
+| ------------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
+| `pip install gaico`                               | Core                                                         | 215 MB                      |
+| `pip install 'gaico[audio]'`                      | Core + `scipy`, `soundfile`                                  | 330 MB                      |
+| `pip install 'gaico[bertscore]'`                  | Core + `bert-score` (includes `torch`, `transformers`, etc.) | 800 MB                      |
+| `pip install 'gaico[cosine]'`                     | Core + `scikit-learn`                                        | 360 MB                      |
+| `pip install 'gaico[jsd]'`                        | Core + `scipy`, `nltk`                                       | 310 MB                      |
+| `pip install 'gaico[audio,jsd,cosine,bertscore]'` | Core + all dependencies from above                           | 1.0 GB                      |
 
 <!-- INSTALLATION_SIZE_TABLE_CONTENT_END -->
 
@@ -454,7 +466,7 @@ If you find this project useful, please consider citing it in your work:
 
 ```bibtex
 @software{AI4Society_GAICo_GenAI_Results,
-  author = {{Nitin Gupta, Pallav Koppisetti, Biplav Srivastava}},
+  author = {{Nitin Gupta, Pallav Koppisetti, Kausik Lakkaraju, Biplav Srivastava}},
   license = {MIT},
   title = {{GAICo: GenAI Results Comparator}},
   year = {2025},
@@ -469,7 +481,7 @@ If you find this project useful, please consider citing it in your work:
 
 ## Acknowledgments
 
-- The library is developed by [Nitin Gupta](https://github.com/g-nitin), [Pallav Koppisetti](https://github.com/pallavkoppisetti), and [Biplav Srivastava](https://github.com/biplav-s). Members of [AI4Society](https://ai4society.github.io) contributed to this tool as part of ongoing discussions. Major contributors are credited.
+- The library is developed by [Nitin Gupta](https://github.com/g-nitin), [Pallav Koppisetti](https://github.com/pallavkoppisetti), [Kausik Lakkaraju](https://github.com/kausik-l), and [Biplav Srivastava](https://github.com/biplav-s). Members of [AI4Society](https://ai4society.github.io) contributed to this tool as part of ongoing discussions. Major contributors are credited.
 - This library uses several open-source packages including NLTK, scikit-learn, and others. Special thanks to the creators and maintainers of the implemented metrics.
 
 <!-- ACKNOWLEDGMENTS_SECTION_END -->

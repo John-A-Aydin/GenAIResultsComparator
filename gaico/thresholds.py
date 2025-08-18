@@ -1,5 +1,7 @@
 from typing import Any, Dict, List, Optional, TypeAlias
 
+import pandas as pd
+
 # Default threshold for each metric
 DEFAULT_THRESHOLD: Dict[str, float] = {
     # Textual
@@ -16,8 +18,9 @@ DEFAULT_THRESHOLD: Dict[str, float] = {
     "TimeSeriesElementDiff": 0.5,
     "TimeSeriesDTW": 0.5,
     # Image
-    "SSIM": 0.5,  # TODO
-    "PSNR": 0.5,  # TODO
+    "ImageSSIM": 0.5,
+    "ImageAverageHash": 0.5,
+    "ImageHistogramMatch": 0.5,
     # Audio
     "AudioSNR": 0.5,  # TODO
     "SpectrogramDistance": 0.5,  # TODO
@@ -150,3 +153,66 @@ def calculate_pass_fail_percent(
         }
 
     return metric_stats
+
+
+def apply_thresholds_to_df(
+    scores_df: pd.DataFrame,
+    custom_thresholds: Optional[Dict[str, float]] = None,
+    metric_col: str = "metric_name",
+    score_col: str = "score",
+) -> pd.DataFrame:
+    """
+    Applies thresholds to a DataFrame of scores, adding 'threshold_applied' and 'passed_threshold' columns.
+
+    :param scores_df: DataFrame containing scores with metric and score columns.
+    :type scores_df: pd.DataFrame
+    :param custom_thresholds: Optional dictionary of custom thresholds to override defaults.
+    :type custom_thresholds: Optional[Dict[str, float]]
+    :param metric_col: The name of the column containing metric names.
+    :type metric_col: str
+    :param score_col: The name of the column containing scores.
+    :type score_col: str
+    :return: A new DataFrame with added threshold information.
+    :rtype: pd.DataFrame
+    """
+    df = scores_df.copy()
+    default_thresholds = get_default_thresholds()
+
+    # Create a mapping from flat metric name to threshold value
+    threshold_map = {}
+    all_metrics = df[metric_col].unique()
+    for metric in all_metrics:
+        base_metric = metric.split("_")[0]
+        # Custom thresholds take precedence (flat name first, then base name)
+        if custom_thresholds and metric in custom_thresholds:
+            threshold_map[metric] = custom_thresholds[metric]
+        elif custom_thresholds and base_metric in custom_thresholds:
+            threshold_map[metric] = custom_thresholds[base_metric]
+        # Then default thresholds
+        elif metric in default_thresholds:
+            threshold_map[metric] = default_thresholds[metric]
+        elif base_metric in default_thresholds:
+            threshold_map[metric] = default_thresholds[base_metric]
+
+    df["threshold_applied"] = df[metric_col].map(threshold_map)
+
+    def check_pass(row: pd.Series) -> Optional[bool]:
+        if pd.isna(row["threshold_applied"]):
+            return None  # No threshold for this metric
+
+        score = row[score_col]
+        threshold = row["threshold_applied"]
+
+        if pd.isna(score):
+            return None
+
+        if row[metric_col].startswith("JSD"):
+            return (1 - score) >= threshold
+        else:
+            return score >= threshold
+
+    # Use a list comprehension over rows to avoid type-checker issues with DataFrame.apply expecting a Series-returning function.
+    df["passed_threshold"] = pd.Series(
+        [check_pass(row) for _, row in df.iterrows()], index=df.index
+    ).astype("boolean")
+    return df

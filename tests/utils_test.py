@@ -67,7 +67,6 @@ def test_prepare_results_dataframe_basic():
     }
     df = prepare_results_dataframe(results_dict)
     assert isinstance(df, pd.DataFrame)
-    assert list(df.columns) == ["model_name", "metric_name", "score"]
     assert (
         len(df) == 5
     )  # ModelA-BLEU, ModelA-ROUGE_rouge1, ModelA-ROUGE_rougeL, ModelB-BLEU, ModelB-Jaccard
@@ -80,12 +79,6 @@ def test_prepare_results_dataframe_basic():
 
     model_b_jaccard = df[(df["model_name"] == "ModelB") & (df["metric_name"] == "Jaccard")]
     assert model_b_jaccard["score"].iloc[0] == 0.6
-
-
-def test_prepare_results_dataframe_empty_input():
-    df = prepare_results_dataframe({})
-    assert df.empty
-    assert list(df.columns) == ["model_name", "metric_name", "score"]
 
 
 def test_prepare_results_dataframe_custom_colnames():

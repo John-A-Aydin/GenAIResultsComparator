@@ -7,6 +7,7 @@ authors = [
   {name = "AI4Society Team", email = "ai4societyteam@gmail.com"},
   {name = "Nitin Gupta", email = "nitin1209@gmail.com"},
   {name = "Pallav Koppisetti", email = "pallav.koppisetti5@gmail.com"},
+  {name = "Kausik Lakkaraju", email = "klakkaraju98@gmail.com"},
   {name = "Biplav Srivastava", email = "prof.biplav@gmail.com"},
 ]
 classifiers = [
@@ -48,7 +49,7 @@ maintainers = [
 name = "GAICo"
 readme = {file = "PYPI_DESCRIPTION.md", content-type = "text/markdown"}
 requires-python = ">=3.10, <3.13"
-version = "0.2.0"
+version = "0.3.0"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/ai4society/GenAIResultsComparator/issues"
@@ -67,10 +68,14 @@ jsd = [
   "nltk>=3.9.1",
   "scipy>=1.15.3",
 ]
+audio = [
+    "scipy>=1.15.3",
+    "soundfile>=0.12.0",
+]
 
 [dependency-groups]
 dev = [
-  "gaico[jsd,cosine,bertscore]",
+  "gaico[jsd,cosine,bertscore,audio]",
   "build>=1.2.2.post1",
   "flake8>=7.2.0",
   "hypothesis>=6.131.17",
@@ -87,6 +92,7 @@ dev = [
   "twine>=6.1.0",
   "mkdocs-macros-plugin>=1.3.7",
   "markdown-callouts>=0.4.0",
+  "gtts>=2.5.4",
 ]
 
 [tool.pytest.ini_options]

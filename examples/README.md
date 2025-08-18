@@ -5,7 +5,7 @@ This directory contains example notebooks demonstrating various use cases of the
 ## Table of Contents
 
 - [Quickstart Examples](#quickstart-examples)
-- [Basic Examples](#basic-examples)
+- [Intermediate Examples](#intermediate-examples)
 - [Advanced Examples](#advanced-examples)
 - [Citations](#citations)
 
@@ -29,34 +29,51 @@ The following notebooks demonstrate the
 
 - A comparison of 'usual' text-based metrics with special metrics for time series and automated planning.
 
-## Basic Examples
+### 5. [`example-audio.ipynb`](example-audio.ipynb): Audio Evaluation with Specialized Metrics
 
-The `basic-examples` directory contains notebooks that illustrate fundamental concepts and workflows in GAICo in various domains. These examples are designed for users who want to understand the GAICo's functionalities in various domains.
+- Evaluating AI-generated TTS audio using specialized audio metrics and highlighting why text-based metrics are unsuitable for audio tasks.
 
-### 1. [`example-timeseries.ipynb`](basic-examples/example-timeseries.ipynb): Time Series Analysis
+### 6. [`example-image.ipynb`](example-image.ipynb): Image Evaluation with Specialized Metrics
+
+- Evaluating AI-generated images using specialized image metrics.
+
+### 7. [`case_study.ipynb`](case_study.ipynb): Travel Assistant AI System Evaluation using GAICo
+
+- Evaluating composite AI travel assistant system "pipelines" using GAICo, comprising an orchestrator LLM and specialist image and audio generation models.
+
+## Intermediate Examples
+
+The `intermediate-examples` directory contains notebooks that illustrate fundamental concepts and workflows in GAICo in various domains. These examples are designed for users who want to understand the GAICo's functionalities in various domains.
+
+### 1. [`example-timeseries.ipynb`](intermediate-examples/example-timeseries.ipynb): Time Series Analysis
 
 - Evaluation and perturbation of time series using GAICo's time series specific metrics.
 
-### 2. [`example-planning.ipynb`](basic-examples/example-planning.ipynb): Automated Planning Analysis
+### 2. [`example-planning.ipynb`](intermediate-examples/example-planning.ipynb): Automated Planning Analysis
 
 - Evaluation of various travel plans using GAICo's planning specific metrics.
 
-### 3. [`example-finance.ipynb`](basic-examples/example-finance.ipynb): Finance Dataset Analysis
+### 3. [`example-finance.ipynb`](intermediate-examples/example-finance.ipynb): Finance Dataset Analysis
 
 - Evaluating models on various questions from the finance domain by iterating on the dataset with the `Experiment` class.
 
-### 4. [`example-recipes.ipynb`](basic-examples/example-recipes.ipynb): Recipe Dataset Analysis
+### 4. [`example-recipes.ipynb`](intermediate-examples/example-recipes.ipynb): Recipe Dataset Analysis
 
 - Evaluating models on various questions from the recipe domain by iterating on the dataset with the `Experiment` class. Further uses parallelization of the comparisons using `joblib`.
 
-### 5. [`example-election.ipynb`](basic-examples/example-election.ipynb): Election Dataset Analysis
+### 5. [`example-election.ipynb`](intermediate-examples/example-election.ipynb): Election Dataset Analysis
 
 - Evaluating models on various questions from the election domain by using the `calculate()` metric method.
 
-### 6. [`DeepSeek-example.ipynb`](basic-examples/example-DeepSeek.ipynb): Testing _DeepSeek R1_
+### 6. [`DeepSeek-example.ipynb`](intermediate-examples/example-DeepSeek.ipynb): Testing _DeepSeek R1_
 
 - The aim for this notebook was to aid with evaluating DeepSeek R1 for [AI4Society's Point of View (POV)](https://drive.google.com/file/d/1ErR1xT7ftvmHiUyYrdUbjyd4qCK_FxKX/view?usp=sharing).
 - **Note**: All results remove the `<think>` tags for the DeepSeek models.
+
+### 7. [`example-audio_data.ipynb`](intermediate-examples/example-audio_data.ipynb): Advanced Audio Analysis & Multi-format Processing
+
+- Demonstrates audio evaluation across different formats (MP3/WAV) and format-independent processing capabilities.
+- Provides interpretation frameworks for both fidelity tasks (TTS) and creative generation (music), with detailed quality analysis.
 
 ## Advanced Examples
 
@@ -66,7 +83,7 @@ The `advanced-examples` directory contains advances notebooks showcasing more co
 
 - Comparison of various LLM responses (Phi, Mixtral, etc.) on FAQ dataset from USC.
 
-### 2. [`example-threshold.ipynb`](advanced-examples/example-threshold.ipynb)`: Thresholds
+### 2. [`example-threshold.ipynb`](advanced-examples/example-threshold.ipynb): Thresholds
 
 - Exploration of default and custom thresholding techniques for LLM responses.
 

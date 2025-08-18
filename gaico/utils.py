@@ -72,63 +72,78 @@ def prepare_results_dataframe(
     model_col: str = "model_name",
     metric_col: str = "metric_name",
     score_col: str = "score",
+    index_col: str = "item_index",
 ) -> pd.DataFrame:
     """
     Converts a nested dictionary of results into a long-format DataFrame suitable for plotting.
+    Handles both single-item results and batch results (lists of scores).
 
-    Example Input `results_dict`:
+    Example Input `results_dict` (batch):
     {
-        'ModelA': {'BLEU': 0.8, 'ROUGE': {'f1': 0.75}},
-        'ModelB': {'BLEU': 0.7, 'ROUGE': {'f1': 0.65}}
+        'ModelA': {'BLEU': [0.8, 0.85], 'ROUGE': [{'f1': 0.75}, {'f1': 0.78}]},
     }
     Example Output DataFrame:
-       model_name  metric_name  score
-    0     ModelA    BLEU       0.80
-    1     ModelA    ROUGE_f1   0.75
-    2     ModelB    BLEU       0.70
-    3     ModelB    ROUGE_f1   0.65
+       item_index model_name metric_name  score
+    0           0     ModelA        BLEU   0.80
+    1           1     ModelA        BLEU   0.85
+    2           0     ModelA    ROUGE_f1   0.75
+    3           1     ModelA    ROUGE_f1   0.78
 
-    :param results_dict: Nested dictionary where keys are model names and values are dictionaries of metric names to scores (or nested score dicts).
+    :param results_dict: Nested dictionary of results. Scores can be single values or lists.
     :type results_dict: Dict[str, Dict[str, Any]]
-    :param model_col: Name for the column containing model names in the output DataFrame.
+    :param model_col: Name for the model column.
     :type model_col: str
-    :param metric_col: Name for the column containing metric names in the output DataFrame.
+    :param metric_col: Name for the metric column.
     :type metric_col: str
-    :param score_col: Name for the column containing scores in the output DataFrame.
+    :param score_col: Name for the score column.
     :type score_col: str
+    :param index_col: Name for the item index column in batch mode.
+    :type index_col: str
     :return: A pandas DataFrame in long format.
     :rtype: pd.DataFrame
     """
-
     records = []
+    is_batch = False
     for model_name, metrics_data in results_dict.items():
         for metric_name, score_value in metrics_data.items():
-            if isinstance(score_value, dict):
-                for sub_metric, sub_score in score_value.items():
-                    full_metric_name = f"{metric_name}_{sub_metric}"
-                    if isinstance(sub_score, (int, float)):  # Ensure the final score is numeric
-                        records.append(
-                            {
-                                model_col: model_name,
-                                metric_col: full_metric_name,
-                                score_col: sub_score,
-                            }
-                        )
-                    # Handle cases with deeper nesting or other types if needed
-            elif isinstance(score_value, (int, float)):
-                records.append(
-                    {
-                        model_col: model_name,
-                        metric_col: metric_name,
-                        score_col: score_value,
-                    }
-                )
-            # Handle for other types if necessary (e.g., lists of scores)
+            # Normalize score_value to a list to handle single and batch cases uniformly
+            score_list = score_value if isinstance(score_value, list) else [score_value]
+
+            if len(score_list) > 1:
+                is_batch = True
+
+            for i, item_score in enumerate(score_list):
+                if isinstance(item_score, dict):
+                    for sub_metric, sub_score in item_score.items():
+                        full_metric_name = f"{metric_name}_{sub_metric}"
+                        if isinstance(sub_score, (int, float)):
+                            records.append(
+                                {
+                                    index_col: i,
+                                    model_col: model_name,
+                                    metric_col: full_metric_name,
+                                    score_col: sub_score,
+                                }
+                            )
+                elif isinstance(item_score, (int, float)):
+                    records.append(
+                        {
+                            index_col: i,
+                            model_col: model_name,
+                            metric_col: metric_name,
+                            score_col: item_score,
+                        }
+                    )
 
     if not records:
-        return pd.DataFrame(columns=[model_col, metric_col, score_col])
+        return pd.DataFrame(columns=[index_col, model_col, metric_col, score_col])
 
-    return pd.DataFrame(records)
+    df = pd.DataFrame(records)
+    # If it wasn't a batch run, the index column is not needed.
+    if not is_batch and index_col in df.columns:
+        df = df.drop(columns=[index_col])
+
+    return df
 
 
 def generate_deltas_frame(

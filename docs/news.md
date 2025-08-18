@@ -2,9 +2,99 @@
 
 This page details the major releases of the GAICo library, highlighting key features and providing quick start examples.
 
+## v0.3.0 - August 2025
+
+This release significantly expands GAICo's capabilities by introducing new multimedia metrics for image and audio. It also contains enhancement to the `Experiment` class by adding support for batch-processing, summarization, and allowing dynamic registration of custom metrics.
+
+### Key Features:
+
+- **Multimedia Metrics:**
+    - Image: Added `ImageSSIM`, `ImageAverageHash`, and `ImageHistogramMatch` for comparing visual content.
+    - Audio: Introduced `AudioSNRNormalized` and `AudioSpectrogramDistance` for evaluating audio signals.
+- **Experiment Class Enhancements:**
+    - Batch Processing: Added support for processing multiple experiments in a single run.
+    - Summarization: Introduced methods for generating summary reports of experiment results.
+    - Dynamic Metric Registration: Enabled users to register custom metrics dynamically.
+
+### Quick Start Examples
+
+#### 1. Multimedia (Image-only)
+
+Evaluate image outputs against a reference using the new image metrics.
+
+```python
+from PIL import Image
+from gaico import Experiment
+
+# Tiny demo images
+ref = Image.new("RGB", (32, 32), color=(255, 0, 0))    # pure red
+img_a = Image.new("RGB", (32, 32), color=(254, 0, 0))   # nearly red
+img_b = Image.new("RGB", (32, 32), color=(0, 0, 255))   # blue
+
+exp = Experiment(
+  llm_responses={
+    "Model A": img_a,
+    "Model B": img_b,
+  },
+  reference_answer=ref,
+)
+
+df = exp.compare(
+  metrics=["ImageSSIM", "ImageAverageHash", "ImageHistogramMatch"],
+  plot=False,
+)
+print(df.head())
+```
+
+#### 2) Experiment Enhancements (batch + summarize)
+
+Run batch comparisons and get a compact summary with aggregated scores and pass rates.
+
+```python
+from gaico import Experiment
+
+# Batch of 3 reference items
+refs = [
+  "The capital is Paris.",
+  "2+2=4",
+  "Blue is a color.",
+]
+
+# Two models with 3 outputs each (same length as refs)
+model_a = [
+  "Paris is the capital.",
+  "2 + 2 equals four",
+  "Blue is a color.",
+]
+model_b = [
+  "London is the capital.",
+  "2+2=5",
+  "Sky is blue.",
+]
+
+exp = Experiment(
+  llm_responses={"A": model_a, "B": model_b},
+  reference_answer=refs,
+)
+
+# Detailed per-item scores (subset of metrics)
+scores = exp.to_dataframe(metrics=["Jaccard", "ROUGE"])
+print(scores.head())
+
+# Compact summary with pass rates and custom thresholds
+summary = exp.summarize(
+  metrics=["Jaccard", "ROUGE"],
+  custom_thresholds={"Jaccard": 0.5, "ROUGE_rouge1": 0.4},
+)
+print(summary)
+
+# Optional: one-call compare + CSV report
+exp.compare(metrics=["Jaccard", "ROUGE"], output_csv_path="v030_example.csv")
+```
+
 ## v0.2.0 - July 2025
 
-This release significantly expands GAICo's capabilities by introducing specialized metrics for structured data: automated planning and time series.
+This release expands GAICo's capabilities by introducing specialized metrics for structured data: automated planning and time series.
 
 ### Key Features:
 
