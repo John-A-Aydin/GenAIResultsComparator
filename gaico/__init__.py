@@ -7,7 +7,7 @@ from .thresholds import (
     calculate_pass_fail_percent,
     get_default_thresholds,
 )
-from .utils import prepare_results_dataframe
+from .utils import generate_deltas_frame, prepare_results_dataframe
 from .visualize import plot_metric_comparison, plot_radar_comparison
 
 __all__ = [
@@ -18,6 +18,7 @@ __all__ = [
     "apply_thresholds",
     "apply_thresholds_to_df",
     "get_default_thresholds",
+    "generate_deltas_frame",
     "DEFAULT_THRESHOLD",
     "calculate_pass_fail_percent",
     "Experiment",

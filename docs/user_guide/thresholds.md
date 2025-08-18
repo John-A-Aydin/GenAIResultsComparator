@@ -117,6 +117,8 @@ for i, item_results in enumerate(thresholded_batch):
 #     ROUGE_rouge1: Score=0.3, Threshold=0.55, Passed=False
 ```
 
+The output from `apply_thresholds` is also what `gaico.utils.generate_deltas_frame` (used by `Experiment.compare()` for CSV output) expects.
+
 ## 3. Calculating Pass/Fail Percentages with `calculate_pass_fail_percent()`
 
 If you have a collection of scores for multiple items (e.g., from evaluating many generated texts against their references) and want to see overall pass/fail rates for each metric, this function is useful.
