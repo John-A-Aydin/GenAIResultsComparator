@@ -15,10 +15,10 @@ from gaico.metrics import (
 
 from .metrics.audio import AudioSNRNormalized, AudioSpectrogramDistance
 from .metrics.base import BaseMetric
-from .metrics.image import ImageSSIM, ImageAverageHash, ImageHistogramMatch
+from .metrics.image import ImageAverageHash, ImageHistogramMatch, ImageSSIM
 from .metrics.structured import PlanningJaccard, PlanningLCS, TimeSeriesDTW, TimeSeriesElementDiff
-from .thresholds import apply_thresholds, get_default_thresholds
-from .utils import generate_deltas_frame, prepare_results_dataframe
+from .thresholds import apply_thresholds, apply_thresholds_to_df, get_default_thresholds
+from .utils import prepare_results_dataframe
 
 # Import plt from visualize to check availability and use for showing plots
 # Use an alias to avoid conflict if user imports plt
@@ -68,83 +68,122 @@ class Experiment:
         reference_answer: Optional[Any],
     ):
         """
-        Initializes the Experiment.
+        Initializes the Experiment for single or batch evaluation.
 
-        :param llm_responses: A dictionary mapping model names (str) to their generated outputs (Any).
+        :param llm_responses: A dictionary mapping model names (str) to their generated outputs.
+                            For batch evaluation, values should be lists of outputs.
+                            e.g., {"ModelA": ["resp1", "resp2"], "ModelB": ["resp1", "resp2"]}
         :type llm_responses: Dict[str, Any]
-        :param reference_answer: A single reference output (Any) to compare against. If None, the output from the first model in `llm_responses` will be used as the reference.
+        :param reference_answer: A single reference output or a list of references for batch evaluation.
+                                If None, the output(s) from the first model will be used as the reference.
         :type reference_answer: Optional[Any]
         :raises TypeError: If llm_responses is not a dictionary.
-        :raises ValueError: If llm_responses does not contain string keys, or if it's empty when reference_answer is None.
+        :raises ValueError: If inputs are inconsistent (e.g., mixing single and list-like responses).
         """
         if not isinstance(llm_responses, dict):
             raise TypeError("llm_responses must be a dictionary.")
         if not all(isinstance(k, str) for k in llm_responses.keys()):
             raise ValueError("llm_responses keys must be strings (model names).")
+        if not llm_responses:
+            raise ValueError("llm_responses cannot be empty.")
 
-        self.llm_responses = llm_responses
         self.models = list(llm_responses.keys())
+
+        # Determine if this is a batch/dataset evaluation based on the first model's response
+        first_model_response = list(llm_responses.values())[0]
+        self.is_batch = isinstance(first_model_response, (list, tuple, pd.Series))
+
+        # Normalize all inputs to lists and validate consistency
+        normalized_responses: Dict[str, List[Any]] = {}
+        expected_len = -1
+
+        for model_name, resp in llm_responses.items():
+            is_resp_list_like = isinstance(resp, (list, tuple, pd.Series))
+            if self.is_batch != is_resp_list_like:
+                raise ValueError(
+                    f"Inconsistent input types. All model responses must be either single items or list-like. "
+                    f"Found mismatch for model '{model_name}'."
+                )
+
+            current_list = list(resp) if is_resp_list_like else [resp]
+            normalized_responses[model_name] = current_list
+
+            if expected_len == -1:
+                expected_len = len(current_list)
+            elif len(current_list) != expected_len:
+                raise ValueError(
+                    f"All model response lists must have the same length. "
+                    f"Expected {expected_len}, but got {len(current_list)} for model '{model_name}'."
+                )
+
+        self.llm_responses = normalized_responses
+
+        # Handle reference answer
         if reference_answer is None:
-            if not self.llm_responses:
-                raise ValueError("llm_responses cannot be empty if reference_answer is None.")
-            # Use the first LLM's response as the reference
             first_model_name = self.models[0]
-            self.reference_answer = list(self.llm_responses.values())[0]
+            self.reference_answer = self.llm_responses[first_model_name]  # This is already a list
             print(
                 f"Warning: reference_answer was not provided for Experiment. "
-                f"Using the response from model '{first_model_name}' as the reference."
+                f"Using responses from model '{first_model_name}' as the reference."
             )
         else:
-            self.reference_answer = reference_answer
+            is_ref_list_like = isinstance(reference_answer, (list, tuple, pd.Series))
+            if self.is_batch and not is_ref_list_like:
+                # Broadcast single reference to all items in the batch
+                self.reference_answer = [reference_answer] * expected_len
+            elif not self.is_batch and is_ref_list_like:
+                raise ValueError(
+                    "A list-like reference_answer was provided for a single-item experiment."
+                )
+            else:
+                self.reference_answer = (
+                    list(reference_answer) if is_ref_list_like else [reference_answer]
+                )
 
-        if self.reference_answer is None:
-            # This should not happen if the logic above is correct, but as a safeguard
-            raise TypeError("Internal error: self.reference_answer is None after initialization.")
+        # Final length check for reference
+        if len(self.reference_answer) != expected_len:
+            raise ValueError(
+                f"The reference_answer list must have the same length as the model response lists. "
+                f"Expected {expected_len}, but got {len(self.reference_answer)}."
+            )
 
-        # model_name -> base_metric_name -> score_value
-        self._raw_scores: Dict[str, Dict[str, Any]] = {}
-        # Caches the full, unfiltered DF from _raw_scores
+        # The _raw_scores structure will now consistently hold lists of scores.
+        self._raw_scores: Dict[str, Dict[str, List[Any]]] = {}
         self._results_df_cache: Optional[pd.DataFrame] = None
-        # model_name -> {flat_metric: {details}}
         self._thresholded_results_cache: Optional[Dict[str, Dict[str, Dict[str, Any]]]] = None
 
     def _calculate_scores_for_metric(self, metric_name: str) -> None:
         """
         Calculates scores for a given base metric across all models if not already done.
+        Handles both single and batch inputs.
 
         :param metric_name: The name of the metric to calculate (e.g., "Jaccard", "ROUGE").
         :type metric_name: str
-        :return: None
-        :rtype: None
         """
         if metric_name not in REGISTERED_METRICS:
-            # This should be caught by callers, but as a safeguard:
             raise ValueError(f"Metric '{metric_name}' is not registered.")
 
         metric_cls = REGISTERED_METRICS[metric_name]
-        # Use default initialization for metric classes
         try:
             metric_instance = metric_cls()
         except ImportError as e:
-            # This ImportError is raised by metric's __init__ if deps are missing
             print(
                 f"Warning: Metric '{metric_name}' cannot be initialized due to missing dependencies and will be skipped. Details: {e}"
             )
-            self._raw_scores.setdefault(self.models[0], {})[metric_name] = (
-                None  # Mark as attempted but failed
-            )
-            return  # Skip calculation for this metric
+            # Mark as attempted but failed for all models
+            for model_name in self.models:
+                self._raw_scores.setdefault(model_name, {})[metric_name] = []
+            return
 
-        for model_name, gen_text in self.llm_responses.items():
+        for model_name, gen_texts in self.llm_responses.items():
             if model_name not in self._raw_scores:
                 self._raw_scores[model_name] = {}
 
-            if metric_name not in self._raw_scores[model_name]:  # Calculate if not present
-                # self.reference_answer is guaranteed to be a string here by __init__
-                score = metric_instance.calculate(gen_text, self.reference_answer)
-                self._raw_scores[model_name][metric_name] = score
+            if metric_name not in self._raw_scores[model_name]:
+                # gen_texts and self.reference_answer are guaranteed to be lists by __init__
+                scores = metric_instance.calculate(gen_texts, self.reference_answer)
+                self._raw_scores[model_name][metric_name] = scores
                 self._results_df_cache = None  # Invalidate DataFrame cache
-                self._thresholded_results_cache = None  # Invalidate threshold cache
 
     def _get_runnable_metrics(self, requested_metrics: List[str]) -> List[str]:
         """
@@ -329,98 +368,81 @@ class Experiment:
         aggregate_func: Optional[Callable] = None,
         plot_title_suffix: str = "Comparison",
         radar_metrics_limit: int = 12,
-    ) -> Optional[pd.DataFrame]:
+    ) -> pd.DataFrame:
         """
         Compares models based on specified metrics, optionally plotting and generating a CSV.
+        Handles both single-item and batch (dataset) evaluations.
 
         :param metrics: List of base metric names. If None, uses all default registered metrics.
         :type metrics: Optional[List[str]]
-        :param plot: If True, generates and shows plots. Defaults to False.
+        :param plot: If True, generates and shows plots. For batch data, plots are aggregated.
         :type plot: bool
-        :param custom_thresholds: Dictionary of metric names (base or flat) to threshold values.
-                                  Overrides default thresholds.
+        :param custom_thresholds: Dictionary of metric names to threshold values.
         :type custom_thresholds: Optional[Dict[str, float]]
-        :param output_csv_path: If provided, path to save a CSV report of thresholded results.
+        :param output_csv_path: If provided, path to save a detailed CSV report.
         :type output_csv_path: Optional[str]
-        :param aggregate_func: Aggregation function (e.g., np.mean, np.median) for plotting
-                                when multiple scores exist per model/metric (not typical for default setup).
+        :param aggregate_func: Aggregation function (e.g., np.mean) for plotting batch results.
         :type aggregate_func: Optional[Callable]
         :param plot_title_suffix: Suffix for plot titles.
         :type plot_title_suffix: str
-        :param radar_metrics_limit: Maximum number of metrics for a radar plot to maintain readability.
+        :param radar_metrics_limit: Maximum number of metrics for a radar plot.
         :type radar_metrics_limit: int
-        :return: A pandas DataFrame containing the scores for the compared metrics, or None if no valid metrics.
-        :rtype: Optional[pd.DataFrame]
+        :return: A pandas DataFrame containing the detailed scores for all items.
+        :rtype: pd.DataFrame
         """
         requested_base_metrics = metrics if metrics is not None else DEFAULT_METRICS_TO_RUN
-
-        # Determine which of the requested metrics are actually runnable based on available dependencies
         runnable_base_metrics = self._get_runnable_metrics(requested_base_metrics)
 
         if not runnable_base_metrics:
-            if metrics:  # User specified metrics, but none were runnable
-                print(
-                    "Warning: None of the specified metrics are runnable due to missing dependencies or registration. Aborting compare."
-                )
-            else:  # Default metrics were requested, but none are runnable
-                print(
-                    "Warning: No default metrics are runnable due to missing dependencies. Aborting compare."
-                )
-            return None
+            print("Warning: No runnable metrics found. Aborting compare.")
+            return pd.DataFrame()
 
-        # 1. Get DataFrame of scores (flat metric names)
-        # This will calculate scores for the runnable_base_metrics.
+        # 1. Get DataFrame of scores (will include 'item_index' for batch runs)
         current_scores_df = self._get_filtered_scores_df(
             base_metrics_to_include=runnable_base_metrics
         )
 
         if current_scores_df.empty:
             print("No results to compare after processing metrics.")
-            return current_scores_df  # Return empty DF
+            return current_scores_df
 
-        # These are the actual (potentially flattened) metric names present in the DataFrame
-        actual_flat_metrics_in_df = sorted(list(current_scores_df["metric_name"].unique()))
-
-        # 2. Apply Thresholds
-        thresholded_results_all_models = self._get_thresholded_results(
-            flat_metrics_for_thresholding=actual_flat_metrics_in_df,
-            custom_thresholds=custom_thresholds,
-            scores_df=current_scores_df,
-        )
-
-        # 3. Plotting
+        # 2. Plotting (uses aggregation for batch data)
         if plot:
             if viz_plt is None:
                 print("Warning: Matplotlib/Seaborn are not installed. Skipping plotting.")
             else:
+                actual_flat_metrics_in_df = sorted(list(current_scores_df["metric_name"].unique()))
                 num_actual_metrics = len(actual_flat_metrics_in_df)
-                # num_models = len(self.models) # Not directly used for plot choice here
 
                 if num_actual_metrics == 0:
                     print("No metrics available for plotting.")
                 elif num_actual_metrics == 1:
-                    metric_to_plot = actual_flat_metrics_in_df[0]
                     plot_metric_comparison(
                         current_scores_df,
-                        metric_name=metric_to_plot,
+                        metric_name=actual_flat_metrics_in_df[0],
                         aggregate_func=aggregate_func,
-                        title=f"{metric_to_plot} {plot_title_suffix}",
+                        title=f"{actual_flat_metrics_in_df[0]} {plot_title_suffix}",
                     )
                     viz_plt.show()
-                else:  # Multiple metrics
+                else:  # Multiple metrics -> Radar plot
                     metrics_for_radar = actual_flat_metrics_in_df
                     if len(actual_flat_metrics_in_df) > radar_metrics_limit:
                         print(
                             f"Warning: Too many metrics ({len(actual_flat_metrics_in_df)}) for radar plot. Plotting first {radar_metrics_limit}."
-                            "To change this, adjust radar_metrics_limit parameter."
                         )
                         metrics_for_radar = actual_flat_metrics_in_df[:radar_metrics_limit]
 
-                    if (
-                        len(metrics_for_radar) < 3 and len(metrics_for_radar) > 0
-                    ):  # Radar usually needs 3+
+                    if len(metrics_for_radar) >= 3:
+                        plot_radar_comparison(
+                            current_scores_df,
+                            metrics=metrics_for_radar,
+                            aggregate_func=aggregate_func,
+                            title=f"Models {plot_title_suffix}",
+                        )
+                        viz_plt.show()
+                    else:
                         print(
-                            f"Warning: Only {len(metrics_for_radar)} metrics available. Radar plot might not be informative. Generating bar plots instead."
+                            f"Warning: Only {len(metrics_for_radar)} metrics available. Generating bar plots instead of radar."
                         )
                         for metric_to_plot in metrics_for_radar:
                             plot_metric_comparison(
@@ -430,44 +452,51 @@ class Experiment:
                                 title=f"{metric_to_plot} {plot_title_suffix}",
                             )
                             viz_plt.show()
-                    elif len(metrics_for_radar) >= 3:
-                        plot_radar_comparison(
-                            current_scores_df,
-                            metrics=metrics_for_radar,
-                            aggregate_func=aggregate_func,
-                            title=f"Models {plot_title_suffix}",
-                        )
-                        viz_plt.show()
-                    else:  # No metrics for radar (e.g. if radar_metrics_limit was 0 or negative)
-                        print("No metrics selected for radar plot.")
 
-        # 4. Generate CSV
+        # 3. Generate CSV Report
         if output_csv_path:
-            csv_input_threshold_results_list = []
-            csv_input_gen_texts_list = []
-            csv_input_ref_texts_list = []
+            # Apply thresholds to the scores dataframe
+            report_df = apply_thresholds_to_df(current_scores_df, custom_thresholds)
 
-            for model_name in self.models:
-                if (
-                    model_name in thresholded_results_all_models
-                    and thresholded_results_all_models[model_name]
-                ):
-                    csv_input_threshold_results_list.append(
-                        thresholded_results_all_models[model_name]
-                    )
-                    csv_input_gen_texts_list.append(self.llm_responses[model_name])
-                    csv_input_ref_texts_list.append(self.reference_answer)
+            if self.is_batch:
+                # Create a DataFrame with the source texts for merging
+                text_data = []
+                for i in range(len(self.reference_answer)):
+                    for model_name in self.models:
+                        text_data.append(
+                            {
+                                "item_index": i,
+                                "model_name": model_name,
+                                "generated_text": self.llm_responses[model_name][i],
+                                "reference_text": self.reference_answer[i],
+                            }
+                        )
+                text_df = pd.DataFrame(text_data)
+                # Merge scores with texts
+                report_df = pd.merge(
+                    text_df, report_df, on=["item_index", "model_name"], how="left"
+                )
+            else:  # Single item case
+                report_df["generated_text"] = report_df["model_name"].map(
+                    lambda m: self.llm_responses[m][0]
+                )
+                report_df["reference_text"] = self.reference_answer[0]
 
-            if csv_input_threshold_results_list:
-                generate_deltas_frame(
-                    threshold_results=csv_input_threshold_results_list,
-                    generated_texts=csv_input_gen_texts_list,
-                    reference_texts=csv_input_ref_texts_list,
-                    output_csv_path=output_csv_path,
-                )
-            else:
-                print(
-                    f"Warning: No non-empty thresholded results to write to CSV for path {output_csv_path}."
-                )
+            # Reorder columns for clarity
+            cols_order = [
+                "item_index",
+                "model_name",
+                "metric_name",
+                "score",
+                "passed_threshold",
+                "threshold_applied",
+                "generated_text",
+                "reference_text",
+            ]
+            final_cols = [c for c in cols_order if c in report_df.columns]
+            report_df = report_df[final_cols]
+
+            report_df.to_csv(output_csv_path, index=False)
+            print(f"CSV report generated at: {output_csv_path}")
 
         return current_scores_df.copy()

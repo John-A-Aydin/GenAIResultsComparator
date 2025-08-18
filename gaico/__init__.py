@@ -3,10 +3,11 @@ from .metrics.base import BaseMetric
 from .thresholds import (
     DEFAULT_THRESHOLD,
     apply_thresholds,
+    apply_thresholds_to_df,
     calculate_pass_fail_percent,
     get_default_thresholds,
 )
-from .utils import generate_deltas_frame, prepare_results_dataframe
+from .utils import prepare_results_dataframe
 from .visualize import plot_metric_comparison, plot_radar_comparison
 
 __all__ = [
@@ -15,8 +16,8 @@ __all__ = [
     "plot_radar_comparison",
     "prepare_results_dataframe",
     "apply_thresholds",
+    "apply_thresholds_to_df",
     "get_default_thresholds",
-    "generate_deltas_frame",
     "DEFAULT_THRESHOLD",
     "calculate_pass_fail_percent",
     "Experiment",
