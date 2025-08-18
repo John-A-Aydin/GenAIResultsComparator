@@ -88,6 +88,7 @@ class Experiment:
             raise ValueError("llm_responses cannot be empty.")
 
         self.models = list(llm_responses.keys())
+        self.custom_metrics: Dict[str, type[BaseMetric]] = {}
 
         # Determine if this is a batch/dataset evaluation based on the first model's response
         first_model_response = list(llm_responses.values())[0]
@@ -189,14 +190,18 @@ class Experiment:
         """
         Filters a list of requested metric names, returning only those
         that can be successfully instantiated (i.e., their dependencies are met).
+        Considers both built-in and dynamically registered custom metrics.
         """
         runnable = []
+        # Combine built-in and custom metrics for lookup
+        combined_metrics = {**REGISTERED_METRICS, **self.custom_metrics}
+
         for metric_name in requested_metrics:
-            if metric_name not in REGISTERED_METRICS:
+            if metric_name not in combined_metrics:
                 print(f"Warning: Metric '{metric_name}' is not registered and will be skipped.")
                 continue
 
-            metric_cls = REGISTERED_METRICS[metric_name]
+            metric_cls = combined_metrics[metric_name]
             try:
                 # Attempt to instantiate to check for ImportErrors from __init__
                 _ = metric_cls()
@@ -358,6 +363,100 @@ class Experiment:
 
         self._thresholded_results_cache = all_models_thresholded_output  # Cache this
         return all_models_thresholded_output
+
+    def register_metric(self, name: str, metric_class: type[BaseMetric]):
+        """
+        Registers a custom metric class for use in this Experiment instance.
+        This allows users to extend GAICo with their own custom metrics
+        and use them seamlessly with the Experiment's `compare()` and `summarize()` methods.
+
+        :param name: The name to refer to this metric by (e.g., "MyCustomMetric").
+        :type name: str
+        :param metric_class: The class (must inherit from BaseMetric).
+        :type metric_class: type[BaseMetric]
+        :raises TypeError: If metric_class is not a subclass of gaico.BaseMetric.
+        """
+        if not issubclass(metric_class, BaseMetric):
+            raise TypeError("metric_class must be a subclass of gaico.BaseMetric")
+        self.custom_metrics[name] = metric_class
+        print(f"Metric '{name}' registered successfully for this Experiment instance.")
+
+    def summarize(
+        self,
+        metrics: Optional[List[str]] = None,
+        custom_thresholds: Optional[Dict[str, float]] = None,
+        agg_funcs: Optional[List[str]] = None,
+    ) -> pd.DataFrame:
+        """
+        Calculates and returns a summary DataFrame with aggregated scores and pass rates
+        for each model and metric.
+
+        :param metrics: List of base metric names to include in the summary. If None, uses all
+                        metrics that have been calculated or can be calculated.
+        :type metrics: Optional[List[str]]
+        :param custom_thresholds: Optional dictionary mapping flat metric names (e.g., "Jaccard", "ROUGE_rouge1")
+                                  or base metric names (e.g., "ROUGE") to custom threshold values.
+                                  If provided, these will override default thresholds for pass rate calculation.
+        :type custom_thresholds: Optional[Dict[str, float]]
+        :param agg_funcs: List of aggregation functions (as strings, e.g., 'mean', 'std', 'min', 'max')
+                          to apply to scores. Defaults to ['mean', 'std'].
+        :type agg_funcs: Optional[List[str]]
+        :return: A summary DataFrame with aggregated scores and pass rates.
+                 Columns will include 'model_name', and then aggregated score columns
+                 (e.g., 'Jaccard_mean', 'ROUGE_rouge1_std') and pass rate columns
+                 (e.g., 'Jaccard_pass_rate').
+        :rtype: pd.DataFrame
+        """
+        if agg_funcs is None:
+            agg_funcs = ["mean", "std"]
+
+        # 1. Get the full results dataframe (calculates if not already)
+        scores_df = self.to_dataframe(metrics=metrics)
+        if scores_df.empty:
+            print("No scores available to summarize.")
+            return pd.DataFrame()
+
+        # Ensure 'item_index' exists for batch processing, even if it's just 0 for single item
+        if "item_index" not in scores_df.columns:
+            scores_df["item_index"] = 0
+
+        # 2. Calculate aggregated scores
+        # Pivot to get metrics as columns for aggregation
+        pivot_scores = scores_df.pivot_table(
+            index=["item_index", "model_name"], columns="metric_name", values="score"
+        )
+
+        # Apply aggregation functions
+        aggregated_scores = pivot_scores.groupby("model_name").agg(agg_funcs)  # type: ignore
+        # Flatten multi-index columns (e.g., ('Jaccard', 'mean') -> 'Jaccard_mean')
+        aggregated_scores.columns = [
+            "_".join(col).strip() for col in aggregated_scores.columns.values
+        ]
+        aggregated_scores = aggregated_scores.reset_index()
+
+        # 3. Calculate pass rates
+        thresholded_df = apply_thresholds_to_df(scores_df, custom_thresholds)
+        # Ensure 'item_index' exists for batch processing, even if it's just 0 for single item
+        if "item_index" not in thresholded_df.columns:
+            thresholded_df["item_index"] = 0
+
+        # Calculate mean of 'passed_threshold' (True=1, False=0) for pass rate
+        pass_rates = thresholded_df.pivot_table(
+            index=["item_index", "model_name"], columns="metric_name", values="passed_threshold"
+        )
+        pass_rates = pass_rates.groupby("model_name").mean() * 100  # Convert to percentage
+        pass_rates.columns = [f"{col}_pass_rate" for col in pass_rates.columns]
+        pass_rates = pass_rates.reset_index()
+
+        # 4. Join and return
+        final_summary = pd.merge(aggregated_scores, pass_rates, on="model_name", how="outer")
+
+        # Reorder columns to have model_name first
+        cols = final_summary.columns.tolist()
+        cols.remove("model_name")
+        final_summary = final_summary[["model_name"] + sorted(cols)]
+
+        return final_summary
 
     def compare(
         self,
