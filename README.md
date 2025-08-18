@@ -28,12 +28,13 @@ Important Links:
 
 ## News
 
-This section summarizes the major releases of the GAICo library, highlighting key features and providing quick start examples.
+This section summarizes the major releases of the GAICo library, highlighting key features and providing quick start examples. For more details, please refer to the [news pages](https://ai4society.github.io/projects/GenAIResultsComparator/news).
 
-| Release Name | Date      | Summary of Changes                                                           | More Info                                                                                              |
-| :----------- | :-------- | :--------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| v0.2.0       | July 2025 | Added specialized text metrics: time-series & automated planning.            | [Details for v0.2.0](https://ai4society.github.io/projects/GenAIResultsComparator/news/#020-july-2025) |
-| v0.1.5       | June 2025 | Initial release: generic text metrics, `Experiment` class, & visualizations. | [Details for v0.1.5](https://ai4society.github.io/projects/GenAIResultsComparator/news/#015-june-2025) |
+| Release Name | Date        | Summary of Changes                                                                         | More Info                                                                                              |
+| :----------- | :---------- | :----------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| v0.3.0       | August 2025 | Added new multimedia metrics (image and audio) and enhancements for the `Experiment` class | [Details for v0.3.0](https://ai4society.github.io/projects/GenAIResultsComparator/news/#030-july-2025) |
+| v0.2.0       | July 2025   | Added specialized text metrics: time-series & automated planning.                          | [Details for v0.2.0](https://ai4society.github.io/projects/GenAIResultsComparator/news/#020-july-2025) |
+| v0.1.5       | June 2025   | Initial release: generic text metrics, `Experiment` class, & visualizations.               | [Details for v0.1.5](https://ai4society.github.io/projects/GenAIResultsComparator/news/#015-june-2025) |
 
 ## Quick Start
 
@@ -285,25 +286,25 @@ The default `pip install gaico` is lightweight. Some metrics require extra depen
 
 <!-- INSTALLATION_OPTIONAL_FEATURES_START -->
 
-- To include the **JSDivergence** metric (requires SciPy and NLTK):
+- To include **Audio** metrics (requires SciPy and SoundFile):
   ```shell
-  pip install 'gaico[jsd]'
-  ```
-- To include the **CosineSimilarity** metric (requires scikit-learn):
-  ```shell
-  pip install 'gaico[cosine]'
+  pip install 'gaico[audio]'
   ```
 - To include the **BERTScore** metric (which has larger dependencies like PyTorch):
   ```shell
   pip install 'gaico[bertscore]'
   ```
-- To include **Audio** metrics (requires SciPy and SoundFile):
+- To include the **CosineSimilarity** metric (requires scikit-learn):
   ```shell
-  pip install 'gaico[audio]'
+  pip install 'gaico[cosine]'
+  ```
+- To include the **JSDivergence** metric (requires SciPy and NLTK):
+  ```shell
+  pip install 'gaico[jsd]'
   ```
 - To install with **all optional features**:
   ```shell
-  pip install 'gaico[jsd,cosine,bertscore,audio]'
+  pip install 'gaico[audio,bertscore,cosine,jsd]'
   ```
 
 > [!TIP]
@@ -323,13 +324,14 @@ The following table provides an _estimated_ overview of the relative disk space 
 
 _Note:_ Core dependencies include: `levenshtein`, `matplotlib`, `numpy`, `pandas`, `rouge-score`, and `seaborn`.
 
-| Installation Command                        | Dependencies                                                 | Estimated Total Size Impact |
-| ------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
-| `pip install gaico`                         | Core                                                         | 215 MB                      |
-| `pip install 'gaico[jsd]'`                  | Core + `scipy`, `nltk`                                       | 310 MB                      |
-| `pip install 'gaico[cosine]'`               | Core + `scikit-learn`                                        | 360 MB                      |
-| `pip install 'gaico[bertscore]'`            | Core + `bert-score` (includes `torch`, `transformers`, etc.) | 800 MB                      |
-| `pip install 'gaico[jsd,cosine,bertscore]'` | Core + all dependencies from above                           | 960 MB                      |
+| Installation Command                              | Dependencies                                                 | Estimated Total Size Impact |
+| ------------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
+| `pip install gaico`                               | Core                                                         | 215 MB                      |
+| `pip install 'gaico[audio]'`                      | Core + `scipy`, `soundfile`                                  | 330 MB                      |
+| `pip install 'gaico[bertscore]'`                  | Core + `bert-score` (includes `torch`, `transformers`, etc.) | 800 MB                      |
+| `pip install 'gaico[cosine]'`                     | Core + `scikit-learn`                                        | 360 MB                      |
+| `pip install 'gaico[jsd]'`                        | Core + `scipy`, `nltk`                                       | 310 MB                      |
+| `pip install 'gaico[audio,jsd,cosine,bertscore]'` | Core + all dependencies from above                           | 1.0 GB                      |
 
 <!-- INSTALLATION_SIZE_TABLE_CONTENT_END -->
 

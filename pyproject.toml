@@ -7,6 +7,7 @@ authors = [
   {name = "AI4Society Team", email = "ai4societyteam@gmail.com"},
   {name = "Nitin Gupta", email = "nitin1209@gmail.com"},
   {name = "Pallav Koppisetti", email = "pallav.koppisetti5@gmail.com"},
+  {name = "Kausik Lakkaraju", email = "klakkaraju98@gmail.com"},
   {name = "Biplav Srivastava", email = "prof.biplav@gmail.com"},
 ]
 classifiers = [
@@ -48,7 +49,7 @@ maintainers = [
 name = "GAICo"
 readme = {file = "PYPI_DESCRIPTION.md", content-type = "text/markdown"}
 requires-python = ">=3.10, <3.13"
-version = "0.2.0"
+version = "0.3.0"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/ai4society/GenAIResultsComparator/issues"
