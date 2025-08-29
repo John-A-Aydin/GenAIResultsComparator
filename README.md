@@ -26,6 +26,17 @@ Important Links:
 
 - PyPI: [pypi.org/project/gaico/](https://pypi.org/project/gaico/)
 
+## Video Demo
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=QYosqxAF5uo">
+    <img src="https://img.youtube.com/vi/QYosqxAF5uo/maxresdefault.jpg"
+         alt="GAICo YouTube Demo" width="75%" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" />
+  </a>
+  <br/>
+  <em>Click to watch the GAICo demo on YouTube</em>
+</p>
+
 ## News
 
 This section summarizes the major releases of the GAICo library, highlighting key features and providing quick start examples. For more details, please refer to the [news pages](https://ai4society.github.io/projects/GenAIResultsComparator/news).

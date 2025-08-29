@@ -11,6 +11,17 @@
 
 [Check out our latest release updates!](https://ai4society.github.io/projects/GenAIResultsComparator/news){ .md-button }
 
+## Video Demo
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin: 20px 0;">
+  <iframe src="https://www.youtube.com/embed/QYosqxAF5uo?rel=0"
+          title="GAICo YouTube Demo"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+  </iframe>
+</div>
+
 {{ readme("DESCRIPTION_FULL") }}
 
 <figure markdown="span">
