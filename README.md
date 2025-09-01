@@ -29,8 +29,8 @@ Important Links:
 ## Video Demo
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=QYosqxAF5uo">
-    <img src="https://img.youtube.com/vi/QYosqxAF5uo/maxresdefault.jpg"
+  <a href="https://youtu.be/ixxqTT-eV48">
+    <img src="https://img.youtube.com/vi/ixxqTT-eV48/maxresdefault.jpg"
          alt="GAICo YouTube Demo" width="75%" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" />
   </a>
   <br/>
