@@ -19,7 +19,14 @@ _GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing,
 
 <!-- TAGLINE_END -->
 
-Important Links:
+<!-- ACCEPTANCE_BANNER_START -->
+<p align="center">
+  <strong>🥳  Paper accepted at <a href="https://aaai.org/conference/aaai/aaai-26/iaai-26-call/">IAAI/AAAI 2026</a>!</strong><br/>
+  <em>We're pleased to announce that our paper has been accepted at the Thirty-Eighth Annual Conference on Innovative Applications of Artificial Intelligence (IAAI/AAAI-26). Read the preprint here: <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a></em>
+</p>
+<!-- ACCEPTANCE_BANNER_END -->
+
+## Important Links
 
 - 📦 𝗣𝘆𝗣𝗜: [pypi.org/project/gaico/](https://pypi.org/project/gaico/)
 

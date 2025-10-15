@@ -9,7 +9,8 @@
 
 {{ readme("TAGLINE") }}
 
-[Check out our latest release updates!](https://ai4society.github.io/projects/GenAIResultsComparator/news){ .md-button }
+!!! success "🥳 Paper accepted at [IAAI/AAAI 2026](https://aaai.org/conference/aaai/aaai-26/iaai-26-call/)!"
+    We're pleased to announce that our paper has been accepted at the Thirty-Eighth Annual Conference on Innovative Applications of Artificial Intelligence (IAAI/AAAI-26). Read the preprint: <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a>
 
 ## Video Demo
 
@@ -21,6 +22,9 @@
           allowfullscreen>
   </iframe>
 </div>
+
+!!! info "Latest release updates"
+    Stay up to date with the latest GAICo releases, changelogs, and project news: [Release notes and news](https://ai4society.github.io/projects/GenAIResultsComparator/news){ .md-button }
 
 {{ readme("DESCRIPTION_FULL") }}
 
