@@ -21,8 +21,8 @@ _GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing,
 
 <!-- ACCEPTANCE_BANNER_START -->
 <p align="center">
-  <strong>🥳  Paper accepted at <a href="https://aaai.org/conference/aaai/aaai-26/iaai-26-call/">IAAI/AAAI 2026</a>!</strong><br/>
-  <em>We're pleased to announce that our paper has been accepted at the Thirty-Eighth Annual Conference on Innovative Applications of Artificial Intelligence (IAAI/AAAI-26). Read the preprint here: <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a></em>
+  <strong>🥳  Paper accepted at <a href="https://aaai.org/conference/aaai/aaai-26/iaai-26-call/">IAAI/AAAI 2026</a> & <a href="https://aaai.org/conference/aaai/aaai-26/demonstration-call/">AAAI Demo 2026</a>!</strong><br/>
+  <em>We're pleased to announce that our paper has been accepted at the 38th Annual Conference on Innovative Applications of Artificial Intelligence (IAAI/AAAI-26) and at the Demonstration Program for the 40th Annual AAAI Conference on Artificial Intelligence (AAAI-26).<br>Read the preprint here: <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a></em>
 </p>
 <!-- ACCEPTANCE_BANNER_END -->
 
@@ -483,15 +483,14 @@ Please ensure that your code passes all tests and adheres to our code style guid
 
 <!-- CITATION_CONTENT_START -->
 
-If you find this project useful, please consider citing it in your work:
+If you find this project useful, please consider citing it in your work. You may use our [ArXiv version](https://arxiv.org/abs/2508.16753) for now:
 
 ```bibtex
-@software{AI4Society_GAICo_GenAI_Results,
-  author = {{Nitin Gupta, Pallav Koppisetti, Kausik Lakkaraju, Biplav Srivastava}},
-  license = {MIT},
-  title = {{GAICo: GenAI Results Comparator}},
-  year = {2025},
-  url = {https://github.com/ai4society/GenAIResultsComparator}
+@article{gupta2025gaico,
+  title={GAICo: A Deployed and Extensible Framework for Evaluating Diverse and Multimodal Generative AI Outputs},
+  author={Gupta, Nitin and Koppisetti, Pallav and Lakkaraju, Kausik and Srivastava, Biplav},
+  journal={arXiv preprint arXiv:2508.16753},
+  year={2025}
 }
 ```
 
