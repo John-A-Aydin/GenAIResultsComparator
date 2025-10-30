@@ -219,14 +219,13 @@ If you want to contribute to GAICo or install it from source for development:
 
 If you find GAICo useful in your research or work, please consider citing it:
 
-If you find this project useful, please consider citing it in your work:
+If you find this project useful, please consider citing it in your work. You may use our [ArXiv version](https://arxiv.org/abs/2508.16753) for now:
 
 ```bibtex
-@software{AI4Society_GAICo_GenAI_Results,
-  author = {{Nitin Gupta, Pallav Koppisetti, Kausik Lakkaraju, Biplav Srivastava}},
-  license = {MIT},
-  title = {{GAICo: GenAI Results Comparator}},
-  year = {2025},
-  url = {https://github.com/ai4society/GenAIResultsComparator}
+@article{gupta2025gaico,
+  title={GAICo: A Deployed and Extensible Framework for Evaluating Diverse and Multimodal Generative AI Outputs},
+  author={Gupta, Nitin and Koppisetti, Pallav and Lakkaraju, Kausik and Srivastava, Biplav},
+  journal={arXiv preprint arXiv:2508.16753},
+  year={2025}
 }
 ```

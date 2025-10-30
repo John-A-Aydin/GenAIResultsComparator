@@ -9,8 +9,8 @@
 
 {{ readme("TAGLINE") }}
 
-!!! success "🥳 Paper accepted at [IAAI/AAAI 2026](https://aaai.org/conference/aaai/aaai-26/iaai-26-call/)!"
-    We're pleased to announce that our paper has been accepted at the Thirty-Eighth Annual Conference on Innovative Applications of Artificial Intelligence (IAAI/AAAI-26). Read the preprint: <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a>
+!!! success "🥳 Papers accepted at [IAAI/AAAI 2026](https://aaai.org/conference/aaai/aaai-26/iaai-26-call/) and [AAAI Demonstrations 2026](https://aaai.org/conference/aaai/aaai-26/demonstration-call/)!"
+    We're pleased to announce that our paper has been accepted at the 38th Annual Conference on Innovative Applications of Artificial Intelligence (IAAI/AAAI-26) and at the Demonstration Program for the 40th Annual AAAI Conference on Artificial Intelligence (AAAI-26). Read the preprint: <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a>
 
 ## Video Demo
 
