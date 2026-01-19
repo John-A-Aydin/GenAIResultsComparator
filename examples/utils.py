@@ -224,14 +224,22 @@ def create_plan_coherence_visuals(df_long, FIGURES_DIR):
 
     # 1. Radar Plot
     print("Creating Plan Coherence Radar Plot...")
-    fig_radar = plt.figure(figsize=(7.8, 7.8))
+    fig_radar = plt.figure(figsize=(9.2, 9.2))
     radar_ax = plt.subplot(111, polar=True)
     plot_radar_comparison(
         df_long,
         axis=radar_ax,
         title="Plan Coherence: Overall Pipeline Performance",
     )
-    radar_ax.legend(loc="upper right", bbox_to_anchor=(1.28, 1.10), frameon=True)
+    radar_ax.set_title("Plan Coherence: Overall Pipeline Performance", size=24, y=1.08)
+    radar_ax.tick_params(axis="both", which="major", labelsize=20, pad=10)
+    radar_ax.yaxis.set_tick_params(labelsize=18)
+    radar_ax.legend(
+        loc="upper right",
+        bbox_to_anchor=(1.28, 1.08),
+        frameon=True,
+        fontsize=20,
+    )
     radar_ax.set_facecolor("#FCFCFC")
     figs["radar"] = fig_radar
     _save_fig_multi(fig_radar, os.path.join(FIGURES_DIR, "plan_coherence_radar"))
@@ -348,7 +356,11 @@ def create_modality_quality_visuals(df_long, FIGURES_DIR):
         axis=radar_ax,
         title="Modality Generation Quality: Specialist Model Performance",
     )
-    radar_ax.legend(loc="upper right", bbox_to_anchor=(1.28, 1.10), frameon=True)
+    # Publication-scale typography for readability in print
+    radar_ax.set_title("Modality Generation Quality: Specialist Model Performance", size=24, y=1.08)
+    radar_ax.tick_params(axis="both", which="major", labelsize=20, pad=10)
+    radar_ax.legend(loc="upper right", bbox_to_anchor=(1.28, 1.08), frameon=True, fontsize=20)
+    radar_ax.yaxis.set_tick_params(labelsize=18)
     radar_ax.set_facecolor("#FCFCFC")
     figs["radar"] = fig_radar
     _save_fig_multi(fig_radar, os.path.join(FIGURES_DIR, "modality_quality_radar"))
