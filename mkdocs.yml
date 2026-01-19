@@ -42,8 +42,11 @@ plugins:
       module_name: project_macros
 nav:
   - Home: index.md
-  - News: news.md
-  - Quick Start: quickstart.md
+  - Installation Guide: installation-guide.md
+  - Resources: resources.md
+  - FAQ: faq.md
+  - News & Releases: news.md
+  - Developer Guide: developer-guide.md
   - API Reference:
       - "Overview": api/metrics/index.md
       - "The Experiment Class": api/experiment.md
@@ -62,13 +65,11 @@ nav:
       - "Thresholds Module": api/thresholds_module.md
       - "Visualize Module": api/visualize_module.md
   - User Guide:
+      - "Quick Start": user_guide/quickstart.md
       - "The Experiment Class": user_guide/experiment_class.md
       - "Using Metrics Directly": user_guide/direct_metrics.md
       - "Working with Thresholds": user_guide/thresholds.md
       - "Visualization": user_guide/visualization.md
-  - Examples: examples.md
-  - FAQ: faq.md
-  - Contributing: contributing.md
   - License: license.md
 
 markdown_extensions:
@@ -84,4 +85,7 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - pymdownx.blocks.caption
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - github-callouts

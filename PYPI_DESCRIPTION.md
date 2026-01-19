@@ -8,9 +8,9 @@
 
 ## Overview
 
-_GenAI Results Comparator (GAICo)_ is a Python library for comparing, analyzing, and visualizing outputs from Large Language Models (LLMs). It offers an extensible range of metrics, including standard text similarity scores, specialized metrics for structured data like planning sequences and time-series, and multimedia metrics for image and audio.
+_GenAI Results Comparator (GAICo)_ helps you measure the quality of your Generative AI (LLM) outputs. It enables you to compare, analyze, and visualize results across text, images, audio, and structured data, helping you answer the question: "Which model performed better?"
 
-At its core, the library provides a set of metrics for evaluating various types of outputs—from plain text strings to structured data like planning sequences and time-series, and multimedia content such as images and audio. While the `Experiment` class streamlines evaluation for text-based and structured string outputs, individual metric classes offer direct control for all data types, including binary or array-based multimedia. These metrics produce normalized scores (typically 0 to 1), where 1 indicates a perfect match, enabling robust analysis and visualization of LLM performance.
+At its core, the library provides a set of metrics for evaluating various types of outputs, from plain text strings to structured data like planning sequences and time-series, and multimedia content such as images and audio. While the `Experiment` class streamlines evaluation for text-based and structured string outputs, individual metric classes offer direct control for all data types, including binary or array-based multimedia. These metrics produce normalized scores (typically 0 to 1), where 1 indicates a perfect match, enabling robust analysis and visualization of LLM performance.
 
 ## Quickstart
 
@@ -21,205 +21,87 @@ Here's a quick example:
 ```python
 from gaico import Experiment
 
-# Sample data from https://arxiv.org/abs/2504.07995
+# Sample LLM responses comparing different models
 llm_responses = {
-    "Google": "Title: Jimmy Kimmel Reacts to Donald Trump Winning the Presidential ... Snippet: Nov 6, 2024 ...",
-    "Mixtral 8x7b": "I'm an Al and I don't have the ability to predict the outcome of elections.",
+    "Google": "Title: Jimmy Kimmel Reacts to Donald Trump Winning...",
+    "Mixtral 8x7b": "I'm an AI and I don't have the ability to predict...",
     "SafeChat": "Sorry, I am designed not to answer such a question.",
 }
 reference_answer = "Sorry, I am unable to answer such a question as it is not appropriate."
-# Alternatively, if reference_answer is None, the response from the first model ("Google") will be used:
-# reference_answer = None
 
-# 1. Initialize Experiment
-exp = Experiment(
-    llm_responses=llm_responses,
-    reference_answer=reference_answer
-)
-
-# 2. Compare models using specific metrics
-#   This will calculate scores for 'Jaccard' and 'ROUGE',
-#   generate a plot (e.g., radar plot for multiple metrics/models),
-#   and save a CSV report.
-results_df = exp.compare(
-    metrics=['Jaccard', 'ROUGE'],  # Specify metrics, or None for all defaults
+# Initialize and run comparison
+exp = Experiment(llm_responses=llm_responses, reference_answer=reference_answer)
+results = exp.compare(
+    metrics=['Jaccard', 'ROUGE'],
     plot=True,
-    output_csv_path="experiment_report.csv",
-    custom_thresholds={"Jaccard": 0.6, "ROUGE_rouge1": 0.35} # Optional: override default thresholds
+    output_csv_path="experiment_report.csv"
 )
 
-# The returned DataFrame contains the calculated scores
-print("Scores DataFrame from compare():")
-print(results_df)
-
-# 3. Get a summary of results (e.g., mean scores and pass rates)
-summary_df = exp.summarize(metrics=['Jaccard', 'ROUGE'], custom_thresholds={"Jaccard": 0.6, "ROUGE_rouge1": 0.35})
-print("\nSummary DataFrame:")
-print(summary_df)
+print(results)
 ```
 
 For more detailed examples, please refer to our Jupyter Notebooks in the [`examples/`](https://github.com/ai4society/GenAIResultsComparator/tree/main/examples) folder in the repository.
 
 ## Features
 
-- **Comprehensive Metric Library:**
-  - **Textual Similarity:** Jaccard, Cosine, Levenshtein, Sequence Matcher.
-  - **N-gram Based:** BLEU, ROUGE, JS Divergence.
-  - **Semantic Similarity:** BERTScore.
-  - **Structured Data:** Specialized metrics for planning sequences (`PlanningLCS`, `PlanningJaccard`) and time-series data (`TimeSeriesElementDiff`, `TimeSeriesDTW`).
-  - **Multimedia:** Metrics for image similarity (`ImageSSIM`, `ImageAverageHash`, `ImageHistogramMatch`) and audio quality (`AudioSNRNormalized`, `AudioSpectrogramDistance`).
-- **Streamlined Evaluation Workflow:**
-  - A high-level `Experiment` class to easily compare multiple models, apply thresholds, generate plots, and create CSV reports.
-- **Enhanced Reporting:**
-  - A `summarize()` method for quick, aggregated overviews of model performance, including mean scores and pass rates.
-- **Dynamic Metric Registration:**
-  - Easily extend the `Experiment` class by registering your own custom `BaseMetric` implementations at runtime.
-- **Powerful Visualization:**
-  - Generate bar charts and radar plots to compare model performance using Matplotlib and Seaborn.
-- **Efficient & Flexible:**
-  - Supports batch processing for efficient computation on datasets.
-  - Optimized for various input types (lists, NumPy arrays, Pandas Series).
-  - Easily extensible architecture for adding new custom metrics.
-- **Robust and Reliable:**
-  - Includes a comprehensive test suite using [Pytest](https://docs.pytest.org/en/stable/).
+- **Comprehensive Metric Library**
+  - Textual similarity: Jaccard, Cosine, Levenshtein, Sequence Matcher
+  - N-gram based: BLEU, ROUGE, JS Divergence
+  - Semantic similarity: BERTScore
+  - Structured data: Planning sequences and time-series metrics
+  - Multimedia: Image similarity (SSIM, hash-based) and audio quality metrics
+
+- **Streamlined Evaluation Workflow**
+  - High-level `Experiment` class for comparing models, applying thresholds, and generating reports
+  - `summarize()` method for aggregated performance overviews
+
+- **Dynamic & Extensible**
+  - Register custom metrics at runtime
+  - Add your own evaluation criteria easily
+
+- **Powerful Visualization**
+  - Generate comparative plots automatically
+  - Support for bar charts and radar plots
+
+- **Robust & Tested**
+  - Comprehensive test suite with Pytest
+  - Production-ready reliability
 
 ## Installation
 
 GAICo can be installed using pip.
 
-- **Create and activate a virtual environment** (e.g., named `gaico-env`):
-
-  ```shell
-    # For Python 3.10+
-    python3 -m venv gaico-env
-    source gaico-env/bin/activate  # On macOS/Linux
-    # gaico-env\Scripts\activate   # On Windows
-  ```
-
-- **Install GAICo:**
-  Once your virtual environment is active, install GAICo using pip:
-
-  ```shell
-    pip install gaico
-  ```
-
-This installs the core GAICo library.
-
-### Using GAICo with Jupyter Notebooks/Lab
-
-If you plan to use GAICo within Jupyter Notebooks or JupyterLab (recommended for exploring examples and interactive analysis), install them into the _same activated virtual environment_:
+**Create and activate a virtual environment:**
 
 ```shell
-# (Ensure your 'gaico-env' is active)
-pip install notebook  # For Jupyter Notebook
-# OR
-# pip install jupyterlab # For JupyterLab
+python3 -m venv gaico-env
+source gaico-env/bin/activate  # On macOS/Linux
+# gaico-env\Scripts\activate   # On Windows
 ```
 
-Then, launch Jupyter from the same terminal where your virtual environment is active:
+**Install GAICo:**
 
 ```shell
-# (Ensure your 'gaico-env' is active)
-jupyter notebook
-# OR
-# jupyter lab
+pip install gaico
 ```
 
-New notebooks created in this session should automatically use the `gaico-env` Python environment. For troubleshooting kernel issues, please see our [FAQ document](https://ai4society.github.io/projects/GenAIResultsComparator/faq).
+This installs the core GAICo library with essential metrics.
 
-### Optional Installations
+**Optional dependencies** for specialized metrics:
 
-The default `pip install gaico` is lightweight. Some metrics require extra dependencies, which you can install as needed.
-
-- To include **Audio** metrics (requires SciPy and SoundFile):
-  ```shell
-  pip install 'gaico[audio]'
-  ```
-- To include the **BERTScore** metric (which has larger dependencies like PyTorch):
-  ```shell
-  pip install 'gaico[bertscore]'
-  ```
-- To include the **CosineSimilarity** metric (requires scikit-learn):
-  ```shell
-  pip install 'gaico[cosine]'
-  ```
-- To include the **JSDivergence** metric (requires SciPy and NLTK):
-  ```shell
-  pip install 'gaico[jsd]'
-  ```
-- To install with **all optional features**:
-  ```shell
-  pip install 'gaico[audio,bertscore,cosine,jsd]'
-  ```
-
-> [!TIP]
-> The `dev` extra, used for development installs, also includes all optional features.
-
-### Installation Size Comparison
-The following table provides an _estimated_ overview of the relative disk space impact of different installation options. Actual sizes may vary depending on your operating system, Python version, and existing packages. These are primarily to illustrate the relative impact of optional dependencies.
-
-_Note:_ Core dependencies include: `levenshtein`, `matplotlib`, `numpy`, `pandas`, `rouge-score`, and `seaborn`.
-
-| Installation Command                              | Dependencies                                                 | Estimated Total Size Impact |
-| ------------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
-| `pip install gaico`                               | Core                                                         | 215 MB                      |
-| `pip install 'gaico[audio]'`                      | Core + `scipy`, `soundfile`                                  | 330 MB                      |
-| `pip install 'gaico[bertscore]'`                  | Core + `bert-score` (includes `torch`, `transformers`, etc.) | 800 MB                      |
-| `pip install 'gaico[cosine]'`                     | Core + `scikit-learn`                                        | 360 MB                      |
-| `pip install 'gaico[jsd]'`                        | Core + `scipy`, `nltk`                                       | 310 MB                      |
-| `pip install 'gaico[audio,jsd,cosine,bertscore]'` | Core + all dependencies from above                           | 1.0 GB                      |
-
-### For Developers (Installing from source)
-
-If you want to contribute to GAICo or install it from source for development:
-
-1.  Clone the repository:
-
-    ```shell
-    git clone https://github.com/ai4society/GenAIResultsComparator.git
-    cd GenAIResultsComparator
-    ```
-
-2.  Set up a virtual environment and install dependencies:
-
-    _We recommend using [UV](https://docs.astral.sh/uv/#installation) for fast environment and dependency management._
-
-    ```shell
-    # Create a virtual environment (Python 3.10-3.12 recommended)
-    uv venv
-    # Activate the environment
-    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-    # Install in editable mode with all development dependencies
-    uv pip install -e ".[dev]"
-    ```
-
-    If you prefer not to use `uv`, you can use `pip`:
-
-    ```shell
-    # Create a virtual environment (Python 3.10-3.12 recommended)
-    python3 -m venv .venv
-    # Activate the environment
-    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-    # Install the package in editable mode with development extras
-    pip install -e ".[dev]"
-    ```
-
-    The `dev` extra installs GAICo with all optional features, plus dependencies for testing, linting, and documentation.
-
-3.  Set up pre-commit hooks (recommended for contributors):
-
-    _Pre-commit hooks help maintain code quality by running checks automatically before you commit._
-
-    ```shell
-    pre-commit install
-    ```
-
+```shell
+pip install 'gaico[audio]'                       # Audio metrics
+pip install 'gaico[bertscore]'                   # BERTScore metric
+pip install 'gaico[cosine]'                      # Cosine similarity
+pip install 'gaico[jsd]'                         # JS Divergence
+pip install 'gaico[audio,bertscore,cosine,jsd]'  # All features
+```
 
 ## Citation
 
 If you find GAICo useful in your research or work, please consider citing it:
 
-If you find this project useful, please consider citing it in your work. You may use our [ArXiv version](https://arxiv.org/abs/2508.16753) for now:
+If you find this project useful, please cite our work:
 
 ```bibtex
 @article{gupta2025gaico,
