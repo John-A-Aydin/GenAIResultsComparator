@@ -1,6 +1,6 @@
 # GAICo Release News
 
-This page details the major releases of the GAICo library, highlighting key features and providing quick start examples.
+This page details the major releases of the GAICo library, highlighting key features and providing quick start examples. _Use the table of contents in the left sidebar to navigate._
 
 ## v0.3.0 - August 2025
 

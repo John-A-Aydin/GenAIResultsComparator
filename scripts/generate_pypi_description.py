@@ -41,12 +41,12 @@ def build_pypi_description():
     install_pypi_basic = extract_section(
         readme_content, "INSTALLATION_PYPI_BASIC"
     )  # This is the core pip install command
-    install_jupyter_guide = extract_section(readme_content, "INSTALLATION_JUPYTER_GUIDE")
+    # install_jupyter_guide = extract_section(readme_content, "INSTALLATION_JUPYTER_GUIDE")
     install_optional_intro = extract_section(readme_content, "INSTALLATION_OPTIONAL_INTRO")
     install_optional_features = extract_section(readme_content, "INSTALLATION_OPTIONAL_FEATURES")
-    install_size_table_intro = extract_section(readme_content, "INSTALLATION_SIZE_TABLE_INTRO")
-    install_size_table_content = extract_section(readme_content, "INSTALLATION_SIZE_TABLE_CONTENT")
-    install_developer_guide = extract_section(readme_content, "INSTALLATION_DEVELOPER_GUIDE")
+    # install_size_table_intro = extract_section(readme_content, "INSTALLATION_SIZE_TABLE_INTRO")
+    # install_size_table_content = extract_section(readme_content, "INSTALLATION_SIZE_TABLE_CONTENT")
+    # install_developer_guide = extract_section(readme_content, "INSTALLATION_DEVELOPER_GUIDE")
 
     citation_content = extract_section(readme_content, "CITATION_CONTENT")
 
@@ -89,17 +89,9 @@ For more detailed examples, please refer to our Jupyter Notebooks in the [`examp
 
 {install_pypi_basic.strip()}
 
-{install_jupyter_guide.strip()}
-
 {install_optional_intro.strip()}
 
 {install_optional_features.strip()}
-
-{install_size_table_intro.strip()}
-{install_size_table_content.strip()}
-
-{install_developer_guide.strip()}
-
 
 ## Citation
 

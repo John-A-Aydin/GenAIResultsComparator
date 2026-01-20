@@ -1,6 +1,6 @@
 # Frequently Asked Questions (FAQ)
 
-Here are answers to some common questions about using GAICo.
+Here are answers to some common questions about using GAICo. _Use the table of contents in the left sidebar to navigate._
 
 ## Q: My Jupyter Notebook isn't working correctly with GAICo (e.g., import errors, version conflicts). What should I do?
 
