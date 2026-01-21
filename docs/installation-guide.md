@@ -157,7 +157,7 @@ If you encounter dependency conflicts:
 
 1. Create a fresh virtual environment
 2. Install GAICo first before other packages
-3. If conflicts persist, see our [FAQ](faq.md#installation-issues) for specific solutions
+3. If conflicts persist, see our [FAQ](faq.md) for potential solutions
 
 ### Platform-Specific Issues
 

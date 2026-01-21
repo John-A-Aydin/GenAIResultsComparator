@@ -44,9 +44,9 @@ This section summarizes the major releases of the GAICo library, highlighting ke
 
 | Release | Date | Summary | Details |
 |---------|------|---------|---------|
-| v0.3.0 | August 2025 | Added multimedia metrics (image and audio) and enhancements for the `Experiment` class | [Full changelog →](news.md#030-july-2025) |
-| v0.2.0 | July 2025 | Added specialized text metrics: time-series & automated planning | [Full changelog →](news.md#020-july-2025) |
-| v0.1.5 | June 2025 | Initial release: generic text metrics, `Experiment` class, & visualizations | [Full changelog →](news.md#015-june-2025) |
+| v0.3.0 | August 2025 | Added multimedia metrics (image and audio) and enhancements for the `Experiment` class | [Full changelog →](news.md#v030-august-2025) |
+| v0.2.0 | July 2025 | Added specialized text metrics: time-series & automated planning | [Full changelog →](news.md#v020-july-2025) |
+| v0.1.5 | June 2025 | Initial release: generic text metrics, `Experiment` class, & visualizations | [Full changelog →](news.md#v015-june-2025) |
 
 [View all release notes →](news.md){ .md-button }
 
@@ -79,7 +79,7 @@ Browse the full [examples directory](https://github.com/ai4society/GenAIResultsC
 - 📖 [Installation Guide](installation-guide.md) - Detailed setup instructions
 - 🔧 [Developer Guide](developer-guide.md) - Contributing and development
 - 🤔 [FAQ](faq.md) - Frequently asked questions
-- 📊 [API Reference](api-reference.md) - Complete API documentation
+- 📊 [API Reference](api/metrics/index.md) - Complete API documentation
 
 ### External Resources
 
