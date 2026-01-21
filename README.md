@@ -200,11 +200,11 @@ print(results)
 If you find this project useful, please cite our work:
 
 ```bibtex
-@article{gupta2025gaico,
+@article{Gupta_Koppisetti_Lakkaraju_Srivastava_2026,
   title={GAICo: A Deployed and Extensible Framework for Evaluating Diverse and Multimodal Generative AI Outputs},
+  journal={Proceedings of the AAAI Conference on Artificial Intelligence},
   author={Gupta, Nitin and Koppisetti, Pallav and Lakkaraju, Kausik and Srivastava, Biplav},
-  journal={arXiv preprint arXiv:2508.16753},
-  year={2025}
+  year={2026},
 }
 ```
 
