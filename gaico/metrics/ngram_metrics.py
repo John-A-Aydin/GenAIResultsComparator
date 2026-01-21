@@ -53,13 +53,17 @@ class BLEU(TextualMetric):
         self,
         n: int = 4,
         smoothing_function: Optional[Callable] = None,
+        **kwargs: Any,
     ):
         """
         Initialize the BLEU scorer with the specified parameters.
 
         :param n: The max n-gram order to use for BLEU calculation, defaults to 4
         :param smoothing_function: The smoothing function to use for BLEU, defaults to SmoothingFunction.method1 from NLTK
+        :param kwargs: Additional arguments (e.g., seed) passed to BaseMetric.
         """
+        super().__init__(**kwargs)  # Propagate seed to BaseMetric
+
         if not _nltk_available:
             raise ImportError("NLTK is not installed, which is required for BLEU metric. ")
         self.n = n
@@ -190,9 +194,12 @@ class ROUGE(TextualMetric):
             If multiple types are provided in a list, the output will be a dictionary of F1 scores for each type.
             Defaults is None which returns a dictionary of all scores. Equivalent of passing ["rouge1", "rouge2", "rougeL"]
         :param use_stemmer: Whether to use stemming for ROUGE calculation, defaults to True
-        :param kwargs: Additional parameters to pass to the ROUGE calculation, defaults to None
-            Default only passes the `use_stemmer` parameter
+        :param kwargs: Additional parameters. 'seed' is passed to BaseMetric; others are passed to rouge_scorer. Defaults to None which only passes the `use_stemmer` parameter
         """
+        # Extract seed so it doesn't get passed to RougeScorer params
+        seed = kwargs.pop("seed", None)
+        super().__init__(seed=seed)  # Propagate seed to BaseMetric
+
         self.params = {"use_stemmer": use_stemmer}
         self.params.update(kwargs)
 
@@ -277,8 +284,11 @@ class JSDivergence(TextualMetric):
 
     def __init__(
         self,
+        **kwargs: Any,
     ):
         """Initialize the Jensen-Shannon Divergence metric."""
+        super().__init__(**kwargs)  # Propagate seed to BaseMetric
+
         if not _nltk_available or not _scipy_available:
             missing_deps = []
             if not _nltk_available:

@@ -66,14 +66,14 @@ class Experiment:
         self,
         llm_responses: Dict[str, Any],
         reference_answer: Optional[Any],
+        seed: Optional[int] = None,
     ):
         """
         Initializes the Experiment for single or batch evaluation.
 
-        :param llm_responses: A dictionary mapping model names (str) to their generated outputs. For batch evaluation, values should be lists of outputs.
-            Ex., {"ModelA": ["resp1", "resp2"], "ModelB": ["resp1", "resp2"]}
-        :param reference_answer: A single reference output or a list of references for batch evaluation.
-                                If None, the output(s) from the first model will be used as the reference.
+        :param llm_responses: A dictionary mapping model names (str) to their generated outputs. For batch evaluation, values should be lists of outputs. Ex., {"ModelA": ["resp1", "resp2"], "ModelB": ["resp1", "resp2"]}
+        :param reference_answer: A single reference output or a list of references for batch evaluation. If None, the output(s) from the first model will be used as the reference.
+        :param seed: Random seed for deterministic execution (if applicable).
         :raises TypeError: If llm_responses is not a dictionary.
         :raises ValueError: If inputs are inconsistent (e.g., mixing single and list-like responses).
         """
@@ -86,6 +86,7 @@ class Experiment:
 
         self.models = list(llm_responses.keys())
         self.custom_metrics: Dict[str, type[BaseMetric]] = {}
+        self.seed = seed
 
         # Determine if this is a batch/dataset evaluation based on the first model's response
         first_model_response = list(llm_responses.values())[0]
@@ -166,7 +167,16 @@ class Experiment:
 
         metric_cls = combined_metrics[metric_name]
         try:
-            metric_instance = metric_cls()
+            # Try initializing with seed (for metrics like BERTScore or updated BaseMetric)
+            try:
+                metric_instance = metric_cls(seed=self.seed)
+            except TypeError:
+                # Fallback for metrics that don't accept 'seed' or '**kwargs' in __init__
+                # (e.g., JaccardSimilarity, BLEU as currently defined)
+                metric_instance = metric_cls()
+                # Inject seed property manually in case the metric uses it later
+                metric_instance.seed = self.seed
+
         except ImportError as e:
             print(
                 f"Warning: Metric '{metric_name}' cannot be initialized due to missing dependencies and will be skipped. Details: {e}"

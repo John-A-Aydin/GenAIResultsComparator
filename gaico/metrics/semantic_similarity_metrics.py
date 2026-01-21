@@ -38,9 +38,11 @@ class BERTScore(TextualMetric):
         self,
         model_type="bert-base-uncased",
         output_val: Optional[List[str]] = None,
-        num_layers=8,
-        batch_size=64,
+        num_layers: int = 8,
+        batch_size: int = 64,
         additional_params: Optional[Dict[str, Any]] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any,
     ):
         """
         Initialize the BERTScore metric.
@@ -52,12 +54,13 @@ class BERTScore(TextualMetric):
             Wrap in a list to return multiple scores of type dict
             Default returns a dictionary of all scores. Equivalent to passing ["precision", "recall", "f1"]
         :param num_layers: Number of layers to use from BERT, defaults to 8
-        :type num_layers: int
         :param batch_size: Batch size for processing, defaults to 64
-        :type batch_size: int
-        :param additional_params: Additional parameters to pass to the BERTScorer class from the bert_score library, defaults to None
-            Default only passes the model_type, num_layers, and batch_size
+        :param additional_params: Additional parameters to pass to the BERTScorer class from the bert_score library, defaults to None. Default only passes the model_type, num_layers, and batch_size.
+        :param seed: Random seed for deterministic execution (if applicable).
+        :param kwargs: Additional keyword arguments.
         """
+        super().__init__(seed=seed, **kwargs)  # Initialize BaseMetric
+
         params = {
             "model_type": model_type,
             "num_layers": num_layers,
@@ -83,6 +86,11 @@ class BERTScore(TextualMetric):
                 "BERTScore dependencies (bert-score, torch) are not installed. "
                 "Please install them with: pip install 'gaico[bertscore]'"
             )
+
+        if self.seed is not None:
+            import torch
+
+            torch.manual_seed(self.seed)
 
         self.scorer = _BERTScorer_cls(**params)  # type: ignore
 

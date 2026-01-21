@@ -28,9 +28,9 @@ class StructuredOutputMetric(BaseMetric, ABC):
     Input is typically a parsed representation of the sequence or structure.
     """
 
-    # Ensure __init__ is present if BaseMetric or other parents require it.
     def __init__(self, **kwargs: Any):
-        super().__init__()  # Call super() in case BaseMetric's hierarchy changes
+        # Forward kwargs (including seed) to BaseMetric
+        super().__init__(**kwargs)
 
 
 class PlanningSequenceMetric(StructuredOutputMetric, ABC):

@@ -50,7 +50,8 @@ class AudioMetric(BaseMetric, ABC):
                 "Audio processing dependencies (scipy, soundfile) not installed. "
                 "Please install them with: pip install scipy soundfile"
             )
-        super().__init__()
+        # Forward kwargs (including seed) to BaseMetric
+        super().__init__(**kwargs)
         self.sample_rate = sample_rate
 
     def calculate(

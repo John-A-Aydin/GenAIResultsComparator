@@ -1,3 +1,4 @@
+import random
 from abc import ABC, abstractmethod
 from typing import Any, Iterable, List, Optional
 
@@ -13,6 +14,18 @@ class BaseMetric(ABC):
     This class defines the interface that all metric classes should implement.
     The public method to be accessed is `calculate`.
     """
+
+    def __init__(self, seed: Optional[int] = None, **kwargs: Any):
+        """
+        Initialize the metric.
+
+        :param seed: Random seed for deterministic execution (if applicable).
+        :param kwargs: Additional keyword arguments.
+        """
+        self.seed = seed
+        if self.seed is not None:
+            random.seed(self.seed)
+            np.random.seed(self.seed)
 
     @abstractmethod
     def _single_calculate(
