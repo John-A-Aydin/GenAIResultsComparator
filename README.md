@@ -34,7 +34,7 @@ _GenAI Results Comparator (GAICo)_ helps you measure the quality of your Generat
 
 ## Resources
 
-📖 **[Documentation](https://ai4society.github.io/projects/GenAIResultsComparator)** · 📦 **[PyPI](https://pypi.org/project/gaico/)** · 📄 **[Technical Paper](https://arxiv.org/abs/2508.16753)** · 🎥 **[Video Demo](https://youtu.be/ixxqTT-eV48)** · 🤔 **[FAQ](https://ai4society.github.io/projects/GenAIResultsComparator/faq)** · 🗞️ **[News & Releases](https://ai4society.github.io/projects/GenAIResultsComparator/news)**
+📖 **[Documentation](https://ai4society.github.io/projects/GenAIResultsComparator)** · 📦 **[PyPI](https://pypi.org/project/gaico/)** · 📄 **[Technical Paper](https://arxiv.org/abs/2508.16753)** · 🎥 **[Video Demo](https://drive.google.com/file/d/1m93agi6H4-HDpIvZCiYOOw6RpYEIQbvD/view)** · 🤔 **[FAQ](https://ai4society.github.io/projects/GenAIResultsComparator/faq)** · 🗞️ **[News & Releases](https://ai4society.github.io/projects/GenAIResultsComparator/news)**
 
 ## What is GAICo?
 
