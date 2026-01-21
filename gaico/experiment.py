@@ -70,13 +70,10 @@ class Experiment:
         """
         Initializes the Experiment for single or batch evaluation.
 
-        :param llm_responses: A dictionary mapping model names (str) to their generated outputs.
-                            For batch evaluation, values should be lists of outputs.
-                            e.g., {"ModelA": ["resp1", "resp2"], "ModelB": ["resp1", "resp2"]}
-        :type llm_responses: Dict[str, Any]
+        :param llm_responses: A dictionary mapping model names (str) to their generated outputs. For batch evaluation, values should be lists of outputs.
+            Ex., {"ModelA": ["resp1", "resp2"], "ModelB": ["resp1", "resp2"]}
         :param reference_answer: A single reference output or a list of references for batch evaluation.
                                 If None, the output(s) from the first model will be used as the reference.
-        :type reference_answer: Optional[Any]
         :raises TypeError: If llm_responses is not a dictionary.
         :raises ValueError: If inputs are inconsistent (e.g., mixing single and list-like responses).
         """
@@ -282,9 +279,7 @@ class Experiment:
         If metrics is None, scores for all default metrics are returned.
 
         :param metrics: A list of base metric names (e.g., "Jaccard", "ROUGE"). Defaults to None.
-        :type metrics: Optional[List[str]]
-        :return: A pandas DataFrame with columns "model_name", "metric_name", "score".
-                 "metric_name" will contain flat metric names (e.g., "ROUGE_rouge1").
+        :return: A pandas DataFrame with columns "model_name", "metric_name", "score". "metric_name" will contain flat metric names (e.g., "ROUGE_rouge1").
         :rtype: pd.DataFrame
         """
         requested_metrics = metrics if metrics is not None else DEFAULT_METRICS_TO_RUN
@@ -374,9 +369,7 @@ class Experiment:
         and use them seamlessly with the Experiment's `compare()` and `summarize()` methods.
 
         :param name: The name to refer to this metric by (e.g., "MyCustomMetric").
-        :type name: str
         :param metric_class: The class (must inherit from BaseMetric).
-        :type metric_class: type[BaseMetric]
         :raises TypeError: If metric_class is not a subclass of gaico.BaseMetric.
         """
         if not issubclass(metric_class, BaseMetric):
@@ -394,16 +387,10 @@ class Experiment:
         Calculates and returns a summary DataFrame with aggregated scores and pass rates
         for each model and metric.
 
-        :param metrics: List of base metric names to include in the summary. If None, uses all
-                        metrics that have been calculated or can be calculated.
-        :type metrics: Optional[List[str]]
-        :param custom_thresholds: Optional dictionary mapping flat metric names (e.g., "Jaccard", "ROUGE_rouge1")
-                                  or base metric names (e.g., "ROUGE") to custom threshold values.
-                                  If provided, these will override default thresholds for pass rate calculation.
-        :type custom_thresholds: Optional[Dict[str, float]]
-        :param agg_funcs: List of aggregation functions (as strings, e.g., 'mean', 'std', 'min', 'max')
-                          to apply to scores. Defaults to ['mean', 'std'].
-        :type agg_funcs: Optional[List[str]]
+        :param metrics: List of base metric names to include in the summary. If None, uses all metrics that have been calculated or can be calculated.
+        :param custom_thresholds: Optional dictionary mapping flat metric names (e.g., "Jaccard", "ROUGE_rouge1") or base metric names (e.g., "ROUGE") to custom threshold values.
+            If provided, these will override default thresholds for pass rate calculation.
+        :param agg_funcs: List of aggregation functions (as strings, e.g., 'mean', 'std', 'min', 'max') to apply to scores. Defaults to ['mean', 'std'].
         :return: A summary DataFrame with aggregated scores and pass rates.
                  Columns will include 'model_name', and then aggregated score columns
                  (e.g., 'Jaccard_mean', 'ROUGE_rouge1_std') and pass rate columns
@@ -476,19 +463,12 @@ class Experiment:
         Handles both single-item and batch (dataset) evaluations.
 
         :param metrics: List of base metric names. If None, uses all default registered metrics.
-        :type metrics: Optional[List[str]]
         :param plot: If True, generates and shows plots. For batch data, plots are aggregated.
-        :type plot: bool
         :param custom_thresholds: Dictionary of metric names to threshold values.
-        :type custom_thresholds: Optional[Dict[str, float]]
         :param output_csv_path: If provided, path to save a detailed CSV report.
-        :type output_csv_path: Optional[str]
         :param aggregate_func: Aggregation function (e.g., np.mean) for plotting batch results.
-        :type aggregate_func: Optional[Callable]
         :param plot_title_suffix: Suffix for plot titles.
-        :type plot_title_suffix: str
         :param radar_metrics_limit: Maximum number of metrics for a radar plot.
-        :type radar_metrics_limit: int
         :return: A pandas DataFrame containing the detailed scores for all items.
         :rtype: pd.DataFrame
         """

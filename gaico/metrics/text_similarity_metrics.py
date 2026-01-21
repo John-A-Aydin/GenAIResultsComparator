@@ -117,7 +117,6 @@ class CosineSimilarity(TextualMetric):
         Initialize the Cosine Similarity metric.
 
         :param kwargs: Parameters for the CountVectorizer
-        :type kwargs: Any
         """
         if not _sklearn_available:
             raise ImportError(
@@ -248,7 +247,6 @@ class LevenshteinDistance(TextualMetric):
         """
         Initialize the Levenshtein Distance metric.
         :param calculate_ratio: Whether to calculate the ratio of the distance to the length of the longer string, defaults to True.
-        :type calculate_ratio: bool
         """
         self.calculate_ratio = calculate_ratio
 

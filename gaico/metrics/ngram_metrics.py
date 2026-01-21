@@ -58,9 +58,7 @@ class BLEU(TextualMetric):
         Initialize the BLEU scorer with the specified parameters.
 
         :param n: The max n-gram order to use for BLEU calculation, defaults to 4
-        :type n: int
         :param smoothing_function: The smoothing function to use for BLEU, defaults to SmoothingFunction.method1 from NLTK
-        :type smoothing_function: Optional[Callable]
         """
         if not _nltk_available:
             raise ImportError("NLTK is not installed, which is required for BLEU metric. ")
@@ -191,12 +189,9 @@ class ROUGE(TextualMetric):
             Should be one of "rouge1", "rouge2", or "rougeL" in a list to return a single F1 score of that type.
             If multiple types are provided in a list, the output will be a dictionary of F1 scores for each type.
             Defaults is None which returns a dictionary of all scores. Equivalent of passing ["rouge1", "rouge2", "rougeL"]
-        :type rouge_types: Optional[List[str]]
         :param use_stemmer: Whether to use stemming for ROUGE calculation, defaults to True
-        :type use_stemmer: bool
         :param kwargs: Additional parameters to pass to the ROUGE calculation, defaults to None
             Default only passes the `use_stemmer` parameter
-        :type kwargs: Any
         """
         self.params = {"use_stemmer": use_stemmer}
         self.params.update(kwargs)

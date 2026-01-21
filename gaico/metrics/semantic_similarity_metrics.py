@@ -51,14 +51,12 @@ class BERTScore(TextualMetric):
             Should be one of "precision", "recall", or "f1" to return a single score of type float
             Wrap in a list to return multiple scores of type dict
             Default returns a dictionary of all scores. Equivalent to passing ["precision", "recall", "f1"]
-        :type output_val: Optional[List[str]]
         :param num_layers: Number of layers to use from BERT, defaults to 8
         :type num_layers: int
         :param batch_size: Batch size for processing, defaults to 64
         :type batch_size: int
         :param additional_params: Additional parameters to pass to the BERTScorer class from the bert_score library, defaults to None
             Default only passes the model_type, num_layers, and batch_size
-        :type additional_params: Dict[str, Any]
         """
         params = {
             "model_type": model_type,

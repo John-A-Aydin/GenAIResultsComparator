@@ -31,13 +31,16 @@ plugins:
       handlers:
         python:
           options:
+            docstring_style: sphinx
             show_root_heading: true # Shows the module/class name as a heading
             show_source: false # Set to true if you want to show source code
+            show_category_heading: true # Shows category headings like "Classes", "Functions", etc.
             members_order: source # Order members as they appear in source
-            docstring_style: sphinx
             heading_level: 2 # Adjust heading levels for API docs
             separate_signature: true # Shows signature on a new line from docstring
-            # show_signature_annotations: true # Ensures type hints are shown
+            show_signature_annotations: true # Ensures type hints are shown
+            # merge_init_into_class: true # Merges __init__ docstring with class docstring
+            # ignore_init_summary: true # Use if needed for summary lines
   - macros:
       module_name: project_macros
 nav:

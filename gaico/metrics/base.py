@@ -64,9 +64,7 @@ class BaseMetric(ABC):
         If the reference is None and `generated` is an iterable, the function will assume the first element of the iterable as the reference. A warning will be printed.
 
         :param generated: A single generated item or an iterable of generated items. Must not be None.
-        :type generated: Any
         :param reference: A single reference item, an iterable of reference items, or None.
-        :type reference: Optional[Any]
         :param kwargs: Additional keyword arguments for specific metrics.
         :return: The calculated metric score(s).
         :rtype: Any

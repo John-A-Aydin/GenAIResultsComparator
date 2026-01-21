@@ -113,9 +113,7 @@ def calculate_pass_fail_percent(
     Calculate pass/fail percentages for each metric across results.
 
     :param results: Dictionary where keys are metric names and values are lists of scores
-    :type results: Dict[str, List[float]]
     :param thresholds: Dictionary of thresholds for each metric
-    :type thresholds: Optional[Dict[str, float]]
     :return: Dictionary with metric names as keys and pass/fail statistics as values
     :rtype: Dict[str, Dict[str, float | int]]
     """

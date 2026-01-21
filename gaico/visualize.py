@@ -65,12 +65,8 @@ def plot_metric_comparison(
     Generates a bar plot comparing different models based on a single metric,
     after aggregating scores using the provided aggregate_func.
 
-    :param df: DataFrame containing the scores, typically from prepare_results_dataframe.
-        Expected columns are defined by model_col, metric_col, and score_col in kwargs.
-    :type df: pd.DataFrame
-    :param aggregate_func: A function to aggregate scores (e.g., numpy.mean, numpy.median).
-        Defaults to numpy.mean if None.
-    :type aggregate_func: Optional[Callable]
+    :param df: DataFrame containing the scores, typically from prepare_results_dataframe. Expected columns are defined by model_col, metric_col, and score_col in kwargs.
+    :param aggregate_func: A function to aggregate scores (e.g., numpy.mean, numpy.median). Defaults to numpy.mean if None.
     :param kwargs: Additional keyword arguments:
         - metric_name (str, required): The name of the metric to plot.
         - model_col (str, optional): Name of the column identifying models. Defaults to "model_name".
@@ -82,7 +78,6 @@ def plot_metric_comparison(
         - figsize (tuple, optional): Figure size. Defaults to (10, 6).
         - axis (Optional[matplotlib.axes.Axes], optional): Matplotlib Axes to plot on.
         - Other kwargs are passed to seaborn.barplot.
-    :type kwargs: Any
     :raises ImportError: If required libraries (matplotlib, seaborn, pandas, numpy) are not installed.
     :raises ValueError: If 'metric_name' is not provided in kwargs.
     :return: The matplotlib Axes object containing the plot.
@@ -179,12 +174,8 @@ def plot_radar_comparison(
     Generates a radar plot comparing multiple models across several metrics,
     after aggregating scores using the provided aggregate_func.
 
-    :param df: DataFrame containing the scores in long format, typically from prepare_results_dataframe.
-        Expected columns are defined by model_col, metric_col, and score_col in kwargs.
-    :type df: pd.DataFrame
-    :param aggregate_func: A function to aggregate scores (e.g., numpy.mean, numpy.median).
-        Defaults to numpy.mean if None.
-    :type aggregate_func: Optional[Callable]
+    :param df: DataFrame containing the scores in long format, typically from prepare_results_dataframe. Expected columns are defined by model_col, metric_col, and score_col in kwargs.
+    :param aggregate_func: A function to aggregate scores (e.g., numpy.mean, numpy.median). Defaults to numpy.mean if None.
     :param kwargs: Additional keyword arguments:
         - metrics (List[str], optional): List of metric names to include. If None, all metrics in df are used.
         - model_col (str, optional): Name of the column identifying models. Defaults to "model_name".
@@ -196,7 +187,6 @@ def plot_radar_comparison(
         - line_width (float, optional): Width of plot lines. Defaults to 1.0.
         - y_ticks (Optional[List[float]], optional): Custom y-axis ticks.
         - axis (Optional[matplotlib.axes.Axes], optional): Matplotlib polar Axes to plot on.
-    :type kwargs: Any
     :raises ImportError: If required libraries (matplotlib, numpy, pandas) are not installed.
     :raises ValueError: If aggregation results in no data or metrics.
     :return: The matplotlib Axes object containing the plot.

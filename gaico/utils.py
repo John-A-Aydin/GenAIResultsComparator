@@ -90,15 +90,10 @@ def prepare_results_dataframe(
     3           1     ModelA    ROUGE_f1   0.78
 
     :param results_dict: Nested dictionary of results. Scores can be single values or lists.
-    :type results_dict: Dict[str, Dict[str, Any]]
     :param model_col: Name for the model column.
-    :type model_col: str
     :param metric_col: Name for the metric column.
-    :type metric_col: str
     :param score_col: Name for the score column.
-    :type score_col: str
     :param index_col: Name for the item index column in batch mode.
-    :type index_col: str
     :return: A pandas DataFrame in long format.
     :rtype: pd.DataFrame
     """
@@ -158,13 +153,9 @@ def generate_deltas_frame(
     :param threshold_results: Output from apply_thresholds (handles both single and batch)
         Single: {"BLEU": {"score": 0.6, "threshold_applied": 0.5, "passed_threshold": True}, ...}
         Batch: [{"BLEU": {"score": 0.6, ...}, ...}, {"BLEU": {"score": 0.4, ...}, ...}]
-    :type threshold_results: Dict[str, Dict[str, Any]] | List[Dict[str, Dict[str, Any]]]
     :param generated_texts: Optional generated text string(s)
-    :type generated_texts: Optional[str | List[str]]
     :param reference_texts: Optional reference text string(s)
-    :type reference_texts: Optional[str | List[str]]
     :param output_csv_path: Optional path to save the CSV file
-    :type output_csv_path: Optional[str]
     :return: A Pandas DataFrame containing the results
     :rtype: pd.DataFrame
     """
