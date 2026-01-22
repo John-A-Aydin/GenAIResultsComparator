@@ -42,11 +42,12 @@ The interactive demo allows you to:
 
 This section summarizes the major releases of the GAICo library, highlighting key features and providing quick start examples.
 
-| Release | Date        | Summary                                                                                | Details                                      |
-| ------- | ----------- | -------------------------------------------------------------------------------------- | -------------------------------------------- |
-| v0.3.0  | August 2025 | Added multimedia metrics (image and audio) and enhancements for the `Experiment` class | [Full changelog →](news.md#v030-august-2025) |
-| v0.2.0  | July 2025   | Added specialized text metrics: time-series & automated planning                       | [Full changelog →](news.md#v020-july-2025)   |
-| v0.1.5  | June 2025   | Initial release: generic text metrics, `Experiment` class, & visualizations            | [Full changelog →](news.md#v015-june-2025)   |
+| Release | Date         | Summary                                                                                | Details                                       |
+| ------- | ------------ | -------------------------------------------------------------------------------------- | --------------------------------------------- |
+| v0.4.0  | January 2026 | Added optional seeding for reproducible results                                        | [Full changelog →](news.md#v040-january-2026) |
+| v0.3.0  | August 2025  | Added multimedia metrics (image and audio) and enhancements for the `Experiment` class | [Full changelog →](news.md#v030-august-2025)  |
+| v0.2.0  | July 2025    | Added specialized text metrics: time-series & automated planning                       | [Full changelog →](news.md#v020-july-2025)    |
+| v0.1.5  | June 2025    | Initial release: generic text metrics, `Experiment` class, & visualizations            | [Full changelog →](news.md#v015-june-2025)    |
 
 [View all release notes →](news.md){ .md-button }
 

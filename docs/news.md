@@ -2,6 +2,17 @@
 
 This page details the major releases of the GAICo library, highlighting key features and providing quick start examples. _Use the table of contents in the left sidebar to navigate._
 
+## v0.4.0 - January 2026
+
+This release introduces optional seeding for reproducible results across runs. By setting a random seed, users can ensure that any stochastic elements in metric calculations yield consistent outputs.
+
+### Key Features:
+- The `Experiment` class now accepts an optional `seed` parameter (e.g., `Experiment(..., seed=4)`).
+- All metric classes now accept a `seed` argument during initialization.
+- Setting a seed automatically initializes Python's `random`, `numpy.random`, and `torch` (for BERTScore) to ensure consistent behavior.
+
+Furthermore, this release includes documentation refresh for better clarity on existing features and usage patterns.
+
 ## v0.3.0 - August 2025
 
 This release significantly expands GAICo's capabilities by introducing new multimedia metrics for image and audio. It also contains enhancement to the `Experiment` class by adding support for batch-processing, summarization, and allowing dynamic registration of custom metrics.
