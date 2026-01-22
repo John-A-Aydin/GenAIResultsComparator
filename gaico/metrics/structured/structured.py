@@ -28,9 +28,9 @@ class StructuredOutputMetric(BaseMetric, ABC):
     Input is typically a parsed representation of the sequence or structure.
     """
 
-    # Ensure __init__ is present if BaseMetric or other parents require it.
     def __init__(self, **kwargs: Any):
-        super().__init__()  # Call super() in case BaseMetric's hierarchy changes
+        # Forward kwargs (including seed) to BaseMetric
+        super().__init__(**kwargs)
 
 
 class PlanningSequenceMetric(StructuredOutputMetric, ABC):
@@ -315,9 +315,7 @@ class TimeSeriesElementDiff(TimeSeriesDataMetric):
         Initialize the TimeSeriesElementDiff metric.
 
         :param key_to_value_weight_ratio: The weight of a key match relative to a perfect value match. For example, a ratio of 2 means a key match is worth twice as much as a value match. Defaults to 2.0.
-        :type key_to_value_weight_ratio: float
         :param normalize: If True, applies min-max normalization to each series' values before comparison. Defaults to False.
-        :type normalize: bool
         """
         super().__init__(normalize=normalize, **kwargs)
         if key_to_value_weight_ratio <= 0:
@@ -534,7 +532,6 @@ class TimeSeriesDTW(TimeSeriesDataMetric):
         The 'exponential' and 'gaussian' methods use `dtaidistance` and are most effective in batch mode.
         In single calculation mode, they will fall back to 'reciprocal' with a warning.
         :param normalize: If True, applies min-max normalization to each series' values before comparison. Defaults to False.
-        :type normalize: bool
         :param kwargs: Additional keyword arguments to be passed to the `dtaidistance.dtw.distance` function.
         :raises ImportError: If the `dtaidistance` package is not installed.
         :raises ValueError: If an unsupported similarity_method is provided.

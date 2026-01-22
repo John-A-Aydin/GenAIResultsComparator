@@ -1,6 +1,6 @@
 # Quick Start
 
-This is a short guide to get you started with GAICo for evaluating and comparing outputs from Generative AI models using various metrics. For more details, check out the [Example Notebooks section in the Resources page](resources.md#example-notebooks).
+This is a short guide to get you started with GAICo for evaluating and comparing outputs from Generative AI models using various metrics. For more details, check out the [Example Notebooks section in the Resources page](../resources.md#example-notebooks).
 
 GAICo makes it easy to evaluate and compare LLM outputs. For detailed, runnable examples, please refer to our Jupyter Notebooks in the [`examples/`](https://github.com/ai4society/GenAIResultsComparator/blob/main/examples/) folder:
 

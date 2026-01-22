@@ -53,7 +53,7 @@
 
     Start evaluating LLM outputs in 2 minutes
 
-    [:octicons-arrow-right-24: Quick Start](quickstart.md)
+    [:octicons-arrow-right-24: Quick Start](user_guide/quickstart.md)
 
 -   :material-notebook:{ .lg .middle } **Examples**
 

@@ -33,9 +33,9 @@ class JaccardSimilarity(TextualMetric):
     Supports calculation for individual sentence pairs and for batches of sentences.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs: Any):
         """Initialize the Jaccard Similarity metric."""
-        pass
+        super().__init__(**kwargs)
 
     def _single_calculate(
         self,
@@ -116,9 +116,12 @@ class CosineSimilarity(TextualMetric):
         """
         Initialize the Cosine Similarity metric.
 
-        :param kwargs: Parameters for the CountVectorizer
-        :type kwargs: Any
+        :param kwargs: Parameters for CountVectorizer. 'seed' is extracted for BaseMetric.
         """
+        # Extract seed so it doesn't get passed to CountVectorizer
+        seed = kwargs.pop("seed", None)
+        super().__init__(seed=seed)  # Propagate seed
+
         if not _sklearn_available:
             raise ImportError(
                 "scikit-learn is not installed, which is required for CosineSimilarity metric. "
@@ -244,12 +247,13 @@ class LevenshteinDistance(TextualMetric):
     It uses the `distance` and `ratio` functions from the `Levenshtein` package.
     """
 
-    def __init__(self, calculate_ratio: bool = True):
+    def __init__(self, calculate_ratio: bool = True, **kwargs: Any):
         """
         Initialize the Levenshtein Distance metric.
         :param calculate_ratio: Whether to calculate the ratio of the distance to the length of the longer string, defaults to True.
-        :type calculate_ratio: bool
+        :param kwargs: Additional parameters for BaseMetric, such as 'seed'.
         """
+        super().__init__(**kwargs)
         self.calculate_ratio = calculate_ratio
 
     def _single_calculate(
@@ -334,9 +338,9 @@ class SequenceMatcherSimilarity(TextualMetric):
     Supports calculation for individual sentence pairs and for batches of sentences.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs: Any):
         """Initialize the SequenceMatcher Similarity metric"""
-        pass
+        super().__init__(**kwargs)
 
     def _single_calculate(
         self,

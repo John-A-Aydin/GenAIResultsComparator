@@ -50,7 +50,8 @@ class AudioMetric(BaseMetric, ABC):
                 "Audio processing dependencies (scipy, soundfile) not installed. "
                 "Please install them with: pip install scipy soundfile"
             )
-        super().__init__()
+        # Forward kwargs (including seed) to BaseMetric
+        super().__init__(**kwargs)
         self.sample_rate = sample_rate
 
     def calculate(
@@ -318,19 +319,11 @@ class AudioSNRNormalized(AudioMetric):
     ):
         """Initialize the AudioSNRNormalized metric.
 
-        :param snr_min: The minimum SNR (in dB) that maps to a normalized score of 0.0.
-            Defaults to -20.0.
-        :type snr_min: float, optional
-        :param snr_max: The maximum SNR (in dB) that maps to a normalized score of 1.0.
-            Defaults to 40.0.
-        :type snr_max: float, optional
-        :param epsilon: A small value added to power calculations to prevent division by zero.
-            Defaults to 1e-10.
-        :type epsilon: float, optional
+        :param snr_min: The minimum SNR (in dB) that maps to a normalized score of 0.0. Defaults to -20.0.
+        :param snr_max: The maximum SNR (in dB) that maps to a normalized score of 1.0. Defaults to 40.0.
+        :param epsilon: A small value added to power calculations to prevent division by zero. Defaults to 1e-10.
         :param sample_rate: Target sample rate for audio processing. Defaults to None.
-        :type sample_rate: int, optional
         :param kwargs: Additional keyword arguments.
-        :type kwargs: Any
         :raises ValueError: If `snr_min` is not less than `snr_max`.
         """
 
@@ -400,22 +393,12 @@ class AudioSpectrogramDistance(AudioMetric):
     ):
         """Initialize the AudioSpectrogramDistance metric.
 
-        :param n_fft: The length of the FFT window, determining frequency resolution.
-            Defaults to 2048.
-        :type n_fft: int, optional
-        :param hop_length: The number of samples between successive FFT windows, determining
-            time resolution. Defaults to 512.
-        :type hop_length: int, optional
-        :param distance_type: The type of distance to calculate between spectrograms.
-            Options: "euclidean", "cosine", "correlation". Defaults to "euclidean".
-        :type distance_type: str, optional
-        :param window: The window function to apply to each FFT frame.
-            Defaults to "hann".
-        :type window: str, optional
+        :param n_fft: The length of the FFT window, determining frequency resolution. Defaults to 2048.
+        :param hop_length: The number of samples between successive FFT windows, determining time resolution. Defaults to 512.
+        :param distance_type: The type of distance to calculate between spectrograms. Options: "euclidean", "cosine", "correlation". Defaults to "euclidean".
+        :param window: The window function to apply to each FFT frame. Defaults to "hann".
         :param sample_rate: Target sample rate for audio processing. Defaults to None.
-        :type sample_rate: int, optional
         :param kwargs: Additional keyword arguments.
-        :type kwargs: Any
         :raises ValueError: If an unsupported `distance_type` is provided.
         """
         super().__init__(sample_rate=sample_rate, **kwargs)

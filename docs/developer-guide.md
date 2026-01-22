@@ -321,7 +321,7 @@ mkdocs gh-deploy
 For maintainers releasing new versions:
 
 1. **Update version** in `pyproject.toml`
-2. **Update changelog** in `docs/news.md`
+2. **Update changelog** in `docs/news.md` and `docs/resources.md`
 3. **Run full test suite**: `uv run pytest`
 4. **Build package**: `uv build`
 5. **Create git tag**: `git tag v0.x.x`
