@@ -2,13 +2,15 @@
 
 <!-- BADGES_START -->
 <p align="center">
+  <a href="https://pepy.tech/projects/gaico"><img src="https://static.pepy.tech/badge/gaico" alt="PyPI Downloads"></a>
+  <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a>
+  <br>
+  <a href="https://deepwiki.com/ai4society/GenAIResultsComparator"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+  <a href="https://ai4society.github.io/projects/GenAIResultsComparator/"><img alt="Documentation" src="https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat-square"></a>
+  <br>
   <a href="https://pypi.org/project/GAICo/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/GAICo.svg?style=flat-square"></a>
   <a href="https://pypi.org/project/GAICo/"><img alt="Python versions" src="https://img.shields.io/pypi/pyversions/GAICo.svg?style=flat-square"></a>
   <a href="https://github.com/ai4society/GenAIResultsComparator/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ai4society/GenAIResultsComparator?style=flat-square"></a>
-  <br>
-  <a href="https://pepy.tech/projects/gaico"><img src="https://static.pepy.tech/badge/gaico" alt="PyPI Downloads"></a>
-  <a href="https://arxiv.org/abs/2508.16753"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2508.16753-b31b1b.svg?style=plastic"></a>
-  <a href="https://ai4society.github.io/projects/GenAIResultsComparator/"><img alt="Documentation" src="https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat-square"></a>
 </p>
 <!-- BADGES_END -->
 
