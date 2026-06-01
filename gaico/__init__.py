@@ -1,3 +1,7 @@
+from pkgutil import extend_path
+
+__path__ = extend_path(__path__, __name__)
+
 from .experiment import Experiment
 from .metrics.base import BaseMetric
 from .thresholds import (

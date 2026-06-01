@@ -1,3 +1,7 @@
+from pkgutil import extend_path
+
+__path__ = extend_path(__path__, __name__)
+
 from .ngram_metrics import BLEU, ROUGE, JSDivergence
 from .semantic_similarity_metrics import BERTScore
 from .text_similarity_metrics import (
